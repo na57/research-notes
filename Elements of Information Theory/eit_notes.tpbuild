@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+echo xelatex "$TEXPAD_ROOTFILE"
+xelatex "$TEXPAD_ROOTFILE"
+echo bibtex "$TEXPAD_ROOTFILE_NO_EXT"
+bibtex "$TEXPAD_ROOTFILE_NO_EXT"
+echo xelatex "$TEXPAD_ROOTFILE"
+xelatex "$TEXPAD_ROOTFILE"
+echo xelatex "$TEXPAD_ROOTFILE"
+xelatex "$TEXPAD_ROOTFILE"
