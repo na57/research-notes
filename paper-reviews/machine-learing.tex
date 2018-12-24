@@ -1,0 +1,204 @@
+%\documentclass[10pt,twocolumn,letterpaper,draft]{article}
+\documentclass[10pt,letterpaper]{article}
+
+% 使用中文宏包
+\usepackage[UTF8]{ctex}
+\usepackage{graphicx} %插入图片的宏包
+\usepackage{float} %设置图片浮动位置的宏包
+\usepackage{subfigure} %插入多图时用子图显示的宏包
+%\usepackage[utf8]{inputenc}
+\usepackage[strings]{underscore}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{overpic}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumitem}
+\setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setdescription{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\footnotesize,        % size of fonts used for the code
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  keywordstyle=\color{blue},       % keyword style
+  stringstyle=\color{mymauve},     % string literal style
+}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+
+
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+\newcommand{\cmm}[1]{\textcolor[rgb]{0,0.6,0}{CMM: #1}}
+\newcommand{\todo}[1]{{\textcolor{red}{\bf [#1]}}}
+\newcommand{\alert}[1]{\textcolor[rgb]{.6,0,0}{#1}}
+
+\newcommand{\IT}{IT\cite{98pami/Itti}}
+\newcommand{\MZ}{MZ\cite{03ACMMM/Ma_Contrast-based}}
+\newcommand{\GB}{GB\cite{conf/nips/HarelKP06}}
+\newcommand{\SR}{SR\cite{07cvpr/hou_SpectralResidual}}
+\newcommand{\FT}{FT\cite{09cvpr/Achanta_FTSaliency}}
+\newcommand{\CA}{CA\cite{10cvpr/goferman_context}}
+\newcommand{\LC}{LC\cite{06acmmm/ZhaiS_spatiotemporal}}
+\newcommand{\AC}{AC\cite{08cvs/achanta_salient}}
+\newcommand{\HC}{HC-maps }
+\newcommand{\RC}{RC-maps }
+\newcommand{\Lab}{$L^*a^*b^*$}
+\newcommand{\mypara}[1]{\paragraph{#1.}}
+
+\graphicspath{{figures/}}
+
+\setcounter{page}{1}
+
+\begin{document}
+%\begin{CJK*}{GBK}{song}
+ 
+
+%%%%%%%%% TITLE
+
+\title{论文阅读笔记}
+
+\author{纳文琪$^{1}$}
+
+\maketitle
+
+
+\section{学习算法的性能度量\cite{2016机器学习}}
+\subsection{错误率和精度}
+\paragraph{错误率} 指的是分类错误的样本占总样本数的比例，主要适用于二分类问题，也可用于多分类问题。
+\paragraph{精度} 指的是分类正确的样本数占总样本数的比例，同意适用于二分类和多分类问题。
+\paragraph{} 错误率和精度简单、常用，但并不能满足所有需求。
+
+\subsection{查准率、查全率和F1}
+\paragraph{混淆矩阵} 对二分类问题，可以将真实类别与预测类别组合划分成TP、TN、FP、FN四种情形，分别表示预测正确的正例和反例、预测错误的
+正例和反例。分类结果可以使用一个“混淆矩阵”表示：\\
+\begin{figure}[H] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+	\centering %图片居中
+	\includegraphics[width=0.7\textwidth]{../images/confusion_matrix.png} %插入图片，[]中设置图片大小，{}中是图片文件名
+	\caption{Confusion Matrix} %最终文档中希望显示的图片标题
+	\label{Fig.main2} %用于文内引用的标签
+\end{figure}
+
+\paragraph{查准率（准确率，precision）} 是从预测结果（其数量作为分母）出发计算的精度，指的是预测为正例的样本中，有多少的预测正确的。其定义是：\\
+\begin{equation}
+	P = \frac{TP}{TP + FP}
+\end{equation}
+
+\paragraph{查全率（召回率，recall）} 是从样本（其数量作为分母）出发计算的精度，指的是所有正例样本中，有多少被预测正确了。其定义是：\\
+\begin{equation}
+	R = \frac{TP}{TP + FN}
+\end{equation}
+
+\paragraph{} 查全率与查准率是一对矛盾的度量。
+
+\paragraph{P-R曲线} 用于直观地显示学习器在样本总体上的查全率、查准率。
+
+\paragraph{F1和$F_\beta$} F1是综合考虑查全率和查准率的度量，定义为：\\
+\begin{equation}
+	F1 = \frac{ 2 \times P \times R }{P + R}
+\end{equation}
+一些应用中，对查准率和查全率的重视程度不同，此时需要用$F_\beta$ ： \\
+\begin{equation}
+	F_\beta = \frac{ (1+\beta^2) \times P \times R }{(\beta^2 \times P) + R}
+\end{equation}
+$F_\beta$是F1的一般形式，当$\beta = 1$时就是F1；当$\beta > 1$时，查全率有更大影响；当$\beta < 1$时，查全率有更大影响。
+
+\subsection{ROC与AUC}
+\paragraph{ROC} 全称是“受试者工作特征”，与P-R曲线类似，它也有两个坐标，其纵坐标表示的是“真正例率”（TPR），即正例的查全率，横坐标表示的是“假正例率”，及反例被判断错误的比率。两者定义为：\\
+\begin{equation}
+	TPR = \frac{TP}{TP + FN}
+\end{equation}
+\begin{equation}
+	FPR = \frac{FP}{TN + FP}
+\end{equation}
+ROC曲线的对角线对应的是“随机猜想”模型，而点(0,1)则代表“理想模型”。
+
+\paragraph{AUC} 进行学习器比较时，与P-R曲线类似，若一个学习器的ROC曲线被另一个学习器的曲线完全包住，则可断言后者的性能优于前者；若两个学习器的ROC曲线有交叉，则需要比较ROC曲线下的面积，即AUC来进行判断。
+
+
+
+\subsection{Deep Neural Networks for Bot Detection\cite{kudugunta2018bot}}
+
+\paragraph{Motivation} 现有的系统都是在account-level进行bots的发现，需要根据特定帐号的一系列历史活动记录来确认帐号是否是bot。这在进行检测的时候代价非常昂贵。论文希望通过仅仅一条tweet来判断是否是bot。
+
+\paragraph{} 论文将bot发现的方法分为用户级和tweet级，进行分类；tweet级根据
+\paragraph{数据集} 论文使用的数据集存在不平衡问题，作者分别使用SMOTE+ENN和SOMTE+TOMEK的方法平衡数据。数据分为用户级和tweet级两类，用户级数据（用户元数据）包括statuses count、followers count等，tweet级数据包括retweet count、number of hashtags等。
+
+
+\bibliographystyle{ieeepes}
+\bibliography{../Saliency}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
