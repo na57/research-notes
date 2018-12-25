@@ -1,4 +1,4 @@
-# 研究工作笔记
+# 研究工作笔记
 
 ## 内容
 - 阅读笔记
@@ -6,7 +6,8 @@
     - [CNN](paper-reviews/cnn.pdf)
     - [机器学习](paper-reviews/machine-learing.pdf)
     - [大米分级](paper-reviews/rice-grading.pdf)
-
+- 其他
+    - [思政课作业](other/zz.pdf)
 ## LaTex 代码段
 
 ### 插入图片
@@ -22,9 +23,9 @@
 ```latex
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\textwidth]{path} %插入图片，[]中设置图片大小，{}中是图片文件名
-	\caption{} %最终文档中希望显示的图片标题
-	\label{Fig.main2} %用于文内引用的标签
+	\includegraphics[width=0.7\textwidth]{path}
+	\caption{}
+	\label{}
 \end{figure}
 ```
 
