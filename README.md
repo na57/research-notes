@@ -8,6 +8,9 @@
     - [大米分级](paper-reviews/rice-grading.pdf)
 - 其他
     - [思政课作业](other/zz.pdf)
+    - [论文阅读作业](other/cyclegan.pdf)
+
+    
 ## LaTex 代码段
 
 ### 插入图片
