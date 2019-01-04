@@ -1,0 +1,152 @@
+\documentclass[12pt,a4paper]{article}
+
+% 使用中文宏包
+\usepackage[UTF8]{ctex}
+\usepackage{graphicx} %插入图片的宏包
+\usepackage{float} %设置图片浮动位置的宏包
+\usepackage[strings]{underscore}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{overpic}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumitem}
+\setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setdescription{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\footnotesize,        % size of fonts used for the code
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  keywordstyle=\color{blue},       % keyword style
+  stringstyle=\color{mymauve},     % string literal style
+}
+
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+
+
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+
+\graphicspath{{figures/}}
+
+\setcounter{page}{1}
+
+\begin{document}
+
+
+%%%%%%%%% TITLE
+
+\title{论文阅读笔记：隐私}
+\author{纳文琪}
+\maketitle
+
+
+\section{Big Privacy: Challenges and Opportunities of Privacy Study in the Age of Big Data\cite{yu2016big}}
+
+\subsection{引言}
+\paragraph{} 最近研究表明，在大数据时代简单地匿名化数据集已无法再抵御针对隐私的攻击。保护隐私最直接的办法就是移除数据集中的ID，然而，事实表明这并不奏效。本质上，一个ID表示的是被描述对象的一组特征，但是实际上，我们依靠一个人的多种特征而不是ID来识别这个人。
+\paragraph{隐私研究的两个方面} 隐私研究集中在两个方面：内容隐私（content privary）和行为隐私（interaction privacy）。
+	\subparagraph{内容隐私} 攻击者根据受害者的一些知识背景从匿名或加密的数据集中识别受害者身份。
+	\subparagraph{行为隐私} 攻击者更关注受害者的行为。
+\paragraph{} 现代隐私研究主要关注两个方面：数据聚类（data clustering）和隐私框架（privacy framework）。
+
+
+\subsection{基础知识}
+\paragraph{隐私参与者} 包括：数据生产者、使用者、管理者、攻击者。
+\paragraph{数据操作} 包括：收集、清洗（anonymizing）、交换（communicating）。
+\paragraph{数据属性的类型} 包括：
+	\subparagraph{显示标识（explicit identifier）} 比如身份证号、特定学校里的学号等；
+	\subparagraph{准标识（quasi-identifier）} 通过关联其他数据集就可以确定用户的属性，比如性别、年龄等。我们一般将一个记录里面的所有准标识字段称为“qid”。拥有相同qid的值的一组记录被称为一个等价类（equivalent class）。
+	\subparagraph{敏感信息（sensitive information）} 用户希望保护的那部分数据；
+	\subparagraph{其他} 用户的其他信息。
+
+\subsection{隐私研究的成果} 
+\subsubsection{数据聚类方面}
+\paragraph{} 数据聚类方面的研究成果主要包括：k-anonymity、l-diversity、t-closeness等。
+\paragraph{k-anonymity} 首先，为保护隐私，我们必须将数据的ID全部移除，这样才能避免特定用户被识别。然而即便所有ID被移除，攻击者还是有可能通过诸如链接外部数据库等方式，根据qid来识别用户。k-anonymity方法的基本原则是：确保含有相同qid组数据的记录在数据集中至少出现k次，也就是说，每个等价类至少有k个记录。这样就可以使得攻击者通过qid识别特定用户的概率变为$\frac{1}{k}$，当存在一个很大的k值的时候，会对用户的识别产生一个很大的信息损失，从而达到隐私保护的作用。k-anonymity方法主要是用于处理准标识字段上的隐私保护问题,但不能处理敏感数据。攻击者可能使用同质攻击（homogeneity attach）或背景知识攻击（backgroud knowledge attack）来破解。
+\paragraph{l-diversity} l-diversity方法可以克服k-anonymity方法的缺点。它要求数据集“对每一个qid的值，确保敏感数据字段至少有l个不同的值”。为了实现它，我们需要增大（还是减小？）敏感信息字段的颗粒度或增加噪声。某些特殊的时候，l-diversity会起到反作用，他会释放更多的信息增益给攻击者。
+\paragraph{t-closeness} 可以修复l-diversity的脆弱性。它的基本思想是：对于任何一个等价类，保证它的值的分布被限定在t范围内。
+
+\subsubsection{隐私框架方面}
+\paragraph{微分隐私（differential privacy）} 在了解用户背景知识的情况下，攻击者可能会通过多次进行统计查询来获得期望的信息。防范策略是：对两个差别很小的数据集进行查询，其结果差别也应该很小，这样就可以限制攻击者获得的信息增益。
+\paragraph{微分可识别性（differential identifiability）}
+\paragraph{成员隐私（membership privacy）} 
+
+\subsection{隐私研究的学科}
+
+\subsection{隐私研究的数学描述}
+
+
+
+\bibliographystyle{ieeepes}
+\bibliography{../Saliency}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
