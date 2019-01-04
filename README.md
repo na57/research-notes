@@ -38,3 +38,17 @@
 - `\includegraphics[width=0.7\textwidth]{path}`  插入图片，[]中设置图片大小，{}中是图片文件名
 - `\caption{}`  最终文档中希望显示的图片标题
 - `\label{Fig.main2}` 用于文内引用的标签
+
+
+### 多行公式一个编号，且对齐
+
+代码：
+```latex
+\begin{equation}
+  \begin{split}
+  	optimize F \\
+	s.t. \ D &\leq D_0 \\
+	L &\leq L_0
+  \end{split}
+\end{equation}
+```

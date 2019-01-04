@@ -85,8 +85,57 @@
 \subsection{隐私研究的学科}
 
 \subsection{隐私研究的数学描述}
+\paragraph{匿名系统} 是一个映射函数：$F = X \rightarrow Y$，$X = \left \{ X_1,X_2,...,X_n \right \}$是原始数据，$Y=\left \{ Y_1,Y_2,...,Y_m \right \}$是系统的输出，对于攻击者，其目的是建立一个映射：$G: Y \rightarrow \hat X$，尽可能地从输出还原原始数据。
+\paragraph{隐私保护系统的两个目的} 被描述为utility和privacy，这也是匿名系统F的两个关键指标。
+	\subparagraph{utility} 使用 distorion D来度量，抽象地表示为：
+	\begin{equation}
+		D=\lambda(X;Y)
+	\end{equation}
+	D有很多种度量方法，例如，可以使用均方来表示。
+	\subparagraph{privacy} 使用 leakage L 来度量，抽象地表示为：
+	\begin{equation}
+		L=\lambda(X;\hat X)
+	\end{equation}
+	L通常使用互信息来度量，即：
+	\begin{equation}
+		L=I(X,\hat X)
+	\end{equation}
+	
+\paragraph{} 给定两个阈值$D_0$和$L_0$，匿名系统可作为一个优化问题：
+\begin{equation}
+  \begin{split}
+  	optimize F \\
+	s.t. \ D &\leq D_0 \\
+	L &\leq L_0
+  \end{split}
+\end{equation}
 
 
+\subsection{隐私度量（Privacy Measurements）}
+\paragraph{}隐私的度量至今都没有太清晰的方法。现有以下几种度量方法：
+
+	\subsubsection{相对度量（Relative Measurement）}
+	\paragraph{} 其思想是：首先给定一个标准（benchmark），再度量研究对象到此标准的距离。比较流行的距离计算方式是Kullback-Leibler距离（相对熵）。
+	\paragraph{} KL距离是基于一阶统计的度量方法，而二阶方法可以度量得更加精确。
+
+	\subsubsection{信息论度量（Information Theoretic Measurement）}
+	\paragraph{} 对于一个投票系统，定义三个随机变量V、S、E，分别表示投票者所投的票、来自投票系统以外的信息、攻击者由投票系统中获得的信息。
+	\paragraph{完美隐私（perfectly privacy）} 定义为：在S条件下，V和E独立。即：$p_{V|S}(v;s) = p_{V|S,E}(v;s,e)$。
+	\paragraph{隐私损失总量（amount of privacy loss）} 定义为：
+	\begin{equation}
+		L = \max (H(V|S) - H(V|S,E))
+	\end{equation}
+	度量隐私可能纰漏的程度。
+	
+	\subsubsection{Unicity Measure}
+
+\subsection{隐私数学模型}
+
+	\subsubsection{k-anonymity 模型}
+	\paragraph{} 定义数据表$T=\left \{ t_1, t_2,...,t_n \right \}$ 是数据行的集合，$A=\left \{ A_1, A_2,...,A_n \right \}$ 是数据的属性，$t_i[A_j]$表示元组$t_i$的属性$A_j$的值。如果
+	\subsubsection{l-diversity 模型}
+	\subsubsection{t-closeness 模型}
+	\subsubsection{Differential Privacy 框架}
 
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
