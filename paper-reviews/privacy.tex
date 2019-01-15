@@ -132,10 +132,40 @@
 \subsection{隐私数学模型}
 
 	\subsubsection{k-anonymity 模型}
-	\paragraph{} 定义数据表$T=\left \{ t_1, t_2,...,t_n \right \}$ 是数据行的集合，$A=\left \{ A_1, A_2,...,A_n \right \}$ 是数据的属性，$t_i[A_j]$表示元组$t_i$的属性$A_j$的值。如果
+	\paragraph{} 定义数据表$T=\left \{ t_1, t_2,...,t_n \right \}$ 是数据行的集合，$A=\left \{ A_1, A_2,...,A_n \right \}$ 是数据的属性集，$t_i[A_j]$表示元组$t_i$的属性$A_j$的值，$C=\left \{ C_1,C_2,...,C_k \right \} \subseteq A $是子属性集。定义 $T[C] = \left \{ t[C_1],t[C_2],...,t[C_k] \right \}$是t在C上的映射，$QI$为所有准标识符的集合。
+	\paragraph{} 我们说一个表T满足k-anonymity，如果它满足，对于每一个元组$t \in T $ 都存在$k-1$个其他的元组$t_{i_1},t_{i_2},...,t_{i{k-1}} \in T $使得 $t[C]=t_{i_1}[C]=t_{i_2}[C]=...=t_{i_{k-1}}[C], C \subseteq QI$。也就是说，任何一组具有相同属性值的准标识符在表中至少出现k次。
 	\subsubsection{l-diversity 模型}
 	\subsubsection{t-closeness 模型}
 	\subsubsection{Differential Privacy 框架}
+
+
+\section{k-anonymity: A model for protecting privacy \cite{k-anonymity}}
+
+\subsection{背景}
+\paragraph{} 人们希望大量数据用于研究和分析，但同时又保证不泄露隐私，即同时满足“数据利用（utility）”和“保护隐私（privacy）”两个要求。通常，人们在发布数据时，会将数据集的标识符（如姓名、身份证号等）删去，从而使得数据集中的个体（individual）不能够被攻击者“重新识别（re-identify）”。然后，在很多情况下，利用非标识符字段仍然可以重新识别出个体。例如，研究显示，87\%的美国人可以通过邮编、性别和生日被识别出来。k-anonymity提供了一种避免此问题的框架。
+
+\subsection{定义}
+\paragraph{纰漏（disclosure）}指的是数据明显地或通过推理被意外地泄露。
+\paragraph{纰漏控制（disclosure control）} 的目的是去识别或限制发布数据中的纰漏，也就是说，确保发布数据具有充分的匿名性。
+\paragraph{准标识符（Quasi-identifier）} 如果数据表中的一组属性，可以通过与外部属性连接重新识别数据表中的个体，则称这组属性为准标识符。
+\paragraph{准标识符的形式化定义} 令U为数据个体的全集，$T(A_1,...,A_n)$为数据表，存在两个映射$f_c: U \rightarrow T$和$f_g: T \rightarrow U'$，其中$U' \subseteq U$。表T的准标识符$Q_T$是一个属性集$\left \{ A_1,...,A_j\right \} \subseteq \left \{ A_1,...,A_n \right \}$，满足 $\exists p_i \in U $使得 $f_g(f_c(pi)[Q_T]) = p_i$。
+
+\subsection{模型}
+\paragraph{k-anonymity} 有表T和它的准标识符$Q_T$，当且仅当$T[Q_T]$中的每一行在$T[Q_T]$中至少出现k次时，我们说T满足k-anonymity。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{../images/k-anonymity-example.png}
+	\caption{}
+	\label{}
+\end{figure}
+
+\subsection{攻击k-anonymity}
+\paragraph{未排序匹配(Unsorted matching)攻击} 如果发布的表的数据的顺序固定，就可以根据这种固定顺序，关联多个发布的表来获取敏感信息。避免这种攻击很简单，只需要对数据进行乱序操作后再发布即可。
+\paragraph{}
+
+
+
+
 
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
