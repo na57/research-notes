@@ -161,11 +161,46 @@
 
 \subsection{攻击k-anonymity}
 \paragraph{未排序匹配(Unsorted matching)攻击} 如果发布的表的数据的顺序固定，就可以根据这种固定顺序，关联多个发布的表来获取敏感信息。避免这种攻击很简单，只需要对数据进行乱序操作后再发布即可。
-\paragraph{}
+\paragraph{互补发布攻击（Complementary release attack）} 通常情况下，我们不会将所有发布的字段都列为准标识符，这样的话，如果同意数据表被发布了多个版本，攻击者就可能会通过关联多个发布的数据表来攻击k-anonymity。
 
+\paragraph{时间攻击(Temporal attack)} 如果数据集是动态变化的，由于每个时间的数据表都可能不一样，而不同时间点之间的数据表没有规则限制，因此攻击者有可能通过关联两个不同时间点数据集来识别数据表中的个体，从而实现对k-anonymity的攻击。两个不同时间点的数据表就与上面所讲的两个不同版本的数据集类似。
 
+\section{l-Diversity: Privacy Beyond k-Anonymity\cite{l-diversity} }
 
+\subsection{k-anonymity面临的两种形式的攻击}
+\paragraph{} k-anonymity面临两种形式的攻击：
+	\subparagraph{同质化攻击（Homogeneity attack）} 如同前面所提的的“互补发布攻击”、“时间攻击”，由于数据发布时，并不是所有字段都是QI，而同一组QI的值相同的数据中，会出现敏感字段都相同的情况，而且这种情况并不罕见。在这种情况下，如果数据集仅执行k-anonymity，则会由于敏感字段缺乏多样性而使得攻击者可以重新识别数据集个体，从而造成信息纰漏。同质化攻击问题的一种解决方案就是本文所讲的l-diversity模型。
+	\subparagraph{背景知识攻击(Background knowledge attack)} 就算数据由于多样性的存在而不会受到同质攻击，但也有可能会由于背景知识（例如，可以从日常生活看出某人肯定不会患有某种特定疾病）的存在而是多样性容易排除，从而使得敏感信息泄露。
+	
+\subsection{定义}
+\paragraph{数据泛化（Data generalization）} 将一个数据集进行分组，各个分组之间互不重叠。其形式化定义为：域$D^*=\left \{P_1,P_2,...\right \}$是域D的泛化，如果$\cup P_i = D$ and $P_i \cap P_j = \O, i \neq j $。$\phi_{D^*}(x)$表示$D^*$包含x的元素P。
 
+\paragraph{攻击者（Adversary）的背景知识} 攻击者可能知道以下几类背景知识：
+	\subparagraph{} 攻击者可能知道已发布的表T的泛化$T^*$，也就是说，知道T的属性的值域。
+	\subparagraph{} 攻击者可能知道某些个体存在于表中。
+	\subparagraph{统计（demographic）背景知识} 攻击者可以知道表中字段的值的分布。
+
+\subsection{贝叶斯优化隐私模型（Bayes-Optimal Privacy）}
+\paragraph{两个假设} 为简化模型，给出两个假设：
+\begin{itemize}
+	\item 数据表T是全集的一个随机样本集；
+	\item 个体只有一个敏感字段。
+\end{itemize}
+另外，还假设一个比较糟糕的情况：攻击者知道准标识符Q和敏感字段S的联合分布。
+\paragraph{度量} 我们用两个指标对隐私纰漏进行度量：
+	\subparagraph{先验置信（prior belief）} 已知目标个体t的准标识符的值q的情况下，其敏感字段值为s的概率：
+	\begin{equation}
+		\alpha_{(q,s)} = P_f(t[S]=s|t[Q]=q)
+	\end{equation}
+
+	\subparagraph{后验置信（posterior belief）} 已知目标个体t的准标识符的值q，以及其泛化$t^*$的情况下，其敏感字段值为s的概率：
+	\begin{equation}
+		\beta_{(q,s,T^*)}=P_f(t[S]=s|t[Q]=q \wedge \exists t^* \in T^*, t \overset{*}{\rightarrow}t^* )
+	\end{equation}
+\paragraph{定理3.1} 令$n_{q^*,s'}$是表中出现$(q^*, s')$对的个数。
+
+\paragraph{定理3.1的证明}
+\subparagraph{} 
 
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
