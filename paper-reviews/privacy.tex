@@ -165,9 +165,103 @@
 
 \paragraph{时间攻击(Temporal attack)} 如果数据集是动态变化的，由于每个时间的数据表都可能不一样，而不同时间点之间的数据表没有规则限制，因此攻击者有可能通过关联两个不同时间点数据集来识别数据表中的个体，从而实现对k-anonymity的攻击。两个不同时间点的数据表就与上面所讲的两个不同版本的数据集类似。
 
+\section{Protecting respondents identities in microdata release \cite{samarati2001}}
+\paragraph{} 本文提出了一种实现k-anonymity的泛化算法。
+
+\subsection{泛化数据(Generalizing data)}
+\subsubsection{泛化关系(Generalization relationships)}
+\paragraph{泛化关系} 是关于全体值域的集合Dom上的一个偏序，记作$ \leq_D $。它满足两个条件：
+\begin{itemize}
+	\item $ \vee D_i,D_j,D_z \in Dom  : D_i \leq_D D_j,  D_i \leq_D D_z \Rightarrow D_j \leq_D D_z \vee D_z \leq_D D_j $ (每个$D_i$最多只有一个直接泛化域)
+	\item 域中的所有值最终都被泛化到一个单一值（单一最大值）
+\end{itemize}
+\paragraph{域泛化结构(domain generalization hierarchy, $DGH_D$} 由泛化关系得到的一个全序结构。
+\paragraph{值泛化关系(value generalization relationships)} 是与DGR类似的，关于某个值域D下的所有值的一个偏序，记作$ \leq_V$
+\paragraph{值泛化结构(value generalization hierarchy, $VGH_D$)} 与$DGH_D$类似，可以用树来表示，其叶子节点就是域D中的值。
+\paragraph{} 值泛化关系和值泛化结构可以看做是域泛化关系和域泛化结构更低层次的抽象。其示例如图 \ref{dgh-vgh} 。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{../images/dgh-vgh.png}
+	\caption{}
+	\label{dgh-vgh}
+\end{figure}
+\paragraph{DGH的格表示} 给定一个域元组$DT=<D_1,...,D_n>$，我们可以定义关于DT的域泛化结构为$DGH_{DT}=DGH_{D_1} \times ... \times DGH_{D_n}$，即DT的DGH是其每个元素的DGH的笛卡尔积。由于每个$DGH_{D_i}$都是全序的，因此$DGH_{DT}$是一个关于DT的格(lattice)，其最小值(DT)在底部，最大值在顶部。如图 \ref{dgh-lattice}所示。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth]{../images/dgh-lattice.png}
+	\caption{DGH的格表示}
+	\label{dgh-lattice}
+\end{figure}
+
+\paragraph{泛化策略(generalization strategy)} $DGH_{DT}$格中的一组边及其节点组成的集合成为泛化策略。如图 \ref{generalization-strategy} 所示。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{../images/generalization-strategy.png}
+	\caption{DGH的格表示}
+	\label{generalization-strategy}
+\end{figure}
+
+\subsubsection{Generalized table and minimal generalization}
+\paragraph{属性的值域} 定义$dom(A_i,T)$表示属性$A_i$在T中的值域。
+\paragraph{泛化表(Generalized Table)} 令$T_i(A_1,...,A_n)$和$T_j(A_1,...,A_n)$是具有相同属性（字段）的两个表，若满足以下条件则称$T_j$是$T_i$的泛化，记作$T_i \preceq T_j$：
+\begin{itemize}
+	\item $|T_i| = |T_j|$(两个表中的数据量一致)
+	\item $\forall A_z \in \left \{ A_1,...,A_n \right \}: dom(A_z, T_i) \leq dom(A_z, T_j)$ (每个属性满足一致的域泛化关系)
+	\item 每个属性值满足一致的值泛化关系
+\end{itemize}
+\paragraph{距离向量(distance vector)} 两个表$T_i$、$T_j$满足$T_i \preceq T_j$，从$T_i$到$T_j$的距离向量记作$DV_{i,j}=[d_1,...,d_n]$，其中$d_z$是$DGH_{D_z}$中$D_i$到$D_j$的距离。
+\paragraph{距离向量的偏序关系} 两个距离向量$DV$、$DV'$，如果所有的$d_i \leq d_i'$，则有$DV \leq DV'$。因此，域泛化结构可以看做是距离向量的格，如图 \ref{lattice-on-dv} 所示。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{../images/lattice-on-dv.png}
+	\caption{DGH的距离向量格表示}
+	\label{lattice-on-dv}
+\end{figure}
+
+\paragraph{k-minimal 泛化(generalization)} 两个表$T_i$、$T_j$满足$T_i \preceq T_j$，如果$T_j$满足下列两个条件就称$T_j$是$T_i$的一个k-minimal泛化：
+\begin{itemize}
+	\item $T_j$满足k-anonymity
+	\item $\forall T_z: T_i \preceq T_z satisfies k-anonymity \Rightarrow \neg (DV_{i,z} \leq DV_{i,j})$(不存在任何一个比$T_j$小，而且满足k-anonymity的泛化表)。
+\end{itemize}
+
+\subsection{Suppressing data}
+\paragraph{} 泛化的好处是可以在满足k-anonymity的条件下发布表中所有的数据条目，而suppression则通过移除某些条目来满足k-anonymity，同时减少泛化所需的步骤。
+
+\paragraph{带suppression的泛化表(generalized table with suppression)} 与泛化表相比，它不要求$|T_i| = |T_j|$，而是要求$|T_i| \geq |T_j|$，也就是说，泛化表的条目可以比原表少。
+
+\paragraph{最小要求抑制(minimal required suppression)} $T_j$是$T_i$的满足k-anonymity的泛化，满足下列条件时，我们称对$T_j$执行了最小要求抑制(也就是说，$T_j$是满足k-anonymity的抑制中条目最多的)：
+\begin{equation}
+	iff \enspace \forall T_z: T_i \preceq T_j, DV_{i,z} = DV_{i,j}, T_z \enspace satisfies \enspace k-anonymity \Rightarrow |T_j| \geq |T_z|.
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{l-Diversity: Privacy Beyond k-Anonymity\cite{l-diversity} }
 
-\subsection{k-anonymity面临的两种形式的攻击}
+\subsection{Introduction}
+\subsubsection{k-anonymity面临的两种形式的攻击}
 \paragraph{} k-anonymity面临两种形式的攻击：
 	\subparagraph{同质化攻击（Homogeneity attack）} 如同前面所提的的“互补发布攻击”、“时间攻击”，由于数据发布时，并不是所有字段都是QI，而同一组QI的值相同的数据中，会出现敏感字段都相同的情况，而且这种情况并不罕见。在这种情况下，如果数据集仅执行k-anonymity，则会由于敏感字段缺乏多样性而使得攻击者可以重新识别数据集个体，从而造成信息纰漏。同质化攻击问题的一种解决方案就是本文所讲的l-diversity模型。
 	\subparagraph{背景知识攻击(Background knowledge attack)} 就算数据由于多样性的存在而不会受到同质攻击，但也有可能会由于背景知识（例如，可以从日常生活看出某人肯定不会患有某种特定疾病）的存在而是多样性容易排除，从而使得敏感信息泄露。
@@ -180,7 +274,7 @@
 	\subparagraph{} 攻击者可能知道某些个体存在于表中。
 	\subparagraph{统计（demographic）背景知识} 攻击者可以知道表中字段的值的分布。
 
-\subsection{贝叶斯优化隐私模型（Bayes-Optimal Privacy）}
+\subsection{贝叶斯优化隐私模型（Bayes-Optimal Privacy, BOP）}
 \paragraph{两个假设} 为简化模型，给出两个假设：
 \begin{itemize}
 	\item 数据表T是全集的一个随机样本集；
@@ -200,7 +294,45 @@
 \paragraph{定理3.1} 令$n_{q^*,s'}$是表中出现$(q^*, s')$对的个数。
 
 \paragraph{定理3.1的证明}
-\subparagraph{} 
+
+\subsubsection{隐私原则}
+\paragraph{数据表发布后可能泄露隐私的两种方式}
+	\subparagraph{正纰漏(Positive Disclosure)} 如果发布数据表后，可以提升攻击者正确识别目标的概率，例如，对于一个q，其对应的s的值都是同一个（同质化攻击），那就是正纰漏。 
+	\subparagraph{负纰漏(Negative Disclosure)} 如果发布数据表后，攻击者可以从中排除一些关于目标的错误的敏感值，例如，根据背景知识可以排除特定个体的一些敏感值，那就是负纰漏。
+\paragraph{不提供信息原则(Uninformative Principl)} 隐私的理想定义应该满足不提供信息原则，即：表的发布并不能为攻击者带来除了背景信息以外的其他信息。此原则有很多实例化的方式，他们都属于贝叶斯优化隐私定义。其中一个是：
+	\subparagraph{$(\rho_1, \rho_2)-Private$} 给定表$T^*$和两个常数$\rho_1,\rho_2$。如果$\alpha_{(q,s)} < \rho_1 \wedge \beta_{(q,s,T^*)} > \rho_2$，或者$\alpha_{(q,s)} < 1 - \rho_1 \wedge \beta_{(q,s,T^*)} > 1 - \rho_2$，我们就说发生了“$(\rho_1, \rho_2)$-privacy breach”。如果$(\rho_1, \rho_2)$-privacy breach没有发生，我们就说表$T^*$满足$(\rho_1, \rho_2)-Private$。
+
+\subsubsection{BOP的局限}
+	
+\paragraph{} BOP存在着一些缺陷，使其无法在实践中使用。包括：
+	\subparagraph{不充分知识} 数据发布者不可能完全知道数据的分布。
+	\subparagraph{对攻击者的无知} 数据发布者不知道攻击者到底知道什么。
+	\subparagraph{实例知识} 理论定义不能定义那些无法被概率模型建模的知识。例如，Bob的儿子可能会告诉Alice，Bob没有糖尿病。
+	\subparagraph{多攻击者} 可能会有多个不同知识水平的攻击者存在，他们具有的背景知识都不同，数据发布者都必须考虑到。
+	
+\subsection{l-diversity: 一种实用的隐私定义}
+\paragraph{} l-diversity可以克服上述的BOP实践中存在的问题。
+
+\subsubsection{l-diversity 原则}
+\paragraph{等价类($q^*-block$)} 表$T^*$中的一组数据，他们的非敏感值都被泛化为$q^*$。
+\paragraph{l-diversity原则} 如果有一个$q^*-block$，它的隐私属性S包含至少$l$个良表示(well-represented)值，我们就说这个$q^*-block$是$l-diverse$的，如果表中所有的$q^*-block$都是$l-diverse$的，那么这个表就是$l-diverse$的。
+\paragraph{} 此原则主张确保每一个$q^*-block$的敏感字段具有至少l个良表示值，但并没有说明良表示意味着什么。最简单的，我们可以将“l个良表示值”理解为“l个不同的值”。另外，定义不同的良表示值也可以得到不同的实例。
+\subsubsection{l-diversity的实例}
+\paragraph{} 根据不同的良表示定义，可以得到不同的l-diversity定义。包括：可区分l-diversity、熵l-diversity、递归l-diversity等。
+
+\paragraph{Distinct(可区分) l-diversity} 要求每个等价类中至少有l个可区分的值。它存在一个缺陷：如果某一个取值的频率明显高于其他取值，这将使得观察者可以以较高的置信度认为这一等价类中的敏感属性都取这个值。
+
+\paragraph{Entropy l-diversity} 设$p_(q^*,s)$为等价类中敏感值为s的概率，那么表满足l-diversity的条件是，每一个等价类都满足：
+\begin{equation}
+	- \Sigma_{s \in S} p_(q^*,s) \log(p_(q^*,s)) \geq \log(l)
+\end{equation}
+这要求整个表的熵至少是$\log(l)$，也就是要求至少有l个可区分的值。这并不容易实现，特别是当某个敏感值非常常见的时候。
+
+\paragraph{Recursive(c,l)-diversity} 递归l-diversity。 
+
+\subsubsection{多敏感属性的情形}
+\paragraph{} 以上讨论都基于一个基本的假设：每条数据只有一个敏感字段。
+\paragraph{Multi-Attribute l-diversity} 若把$S_i$之外的所有S都当做Q还满足l-diversity，那么表T就满足l-diversity。
 
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
