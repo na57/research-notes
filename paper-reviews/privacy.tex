@@ -235,13 +235,28 @@
 \end{equation}
 
 
+\paragraph{} 对任意一个表，若想要它满足k-anonymity，最简单的办法是移除QI重复次数少于k的数据条目。这样并不是好的做法，我们最希望得到的是一个执行了最小要求抑制的泛化结果，尽可能保留数据条目。泛化和抑制应当交叉使用，而问题是：以损失数据进度为代价的泛化和以损失数据完整性为代价的抑制，哪种更好。
+
+\paragraph{} 我们假设一个可接受的抑制值MaxSup，当被移除的数据条目少于它时，我们认为这是可接受的，也就是说，此时抑制比泛化更好。这是由于抑制只影响一条数据，而泛化影响整个数据表的某个属性。
 
 
+\paragraph{带suppresion 的k-minimal泛化}  两个表$T_i$、$T_j$，满足$T_i \preceq T_j$，若满足以下条件则称$T_j$是$T_i$的k-minimal泛化：
+\begin{itemize}
+	\item $T_j$ 满足执行最小要求抑制的k-anonymity。
+	\item $ |T_i| - |T_j| \leq MaxSup$.（不需要执行比要求的更多的抑制操作）
+	\item $\forall T_z: T_i \preceq T_z$ and satisfies conditions 1 and 2 $ \Rightarrow \neg (DV_{i,z} < DV_{i,j})$ （不存在满足以上条件，且比它DV更小的泛化）。
+\end{itemize}
 
+\subsection{Computing a k-minimal generalization}
+\paragraph{定理5.1} 表$T_i = PT[QI]$，DT是其值域元组，$T_i$的每一个k最小泛化都是$DGH_{DT}$中的泛化策略的局部最小泛化。
+\paragraph{} 由定理5.1可知，可以这样计算一个k最小泛化：遍历每一个泛化策略，沿着DT到DGH的最大值的方向出发，直到找到一个泛化结果，是的其满足k-anonymity和抑制阈值为止。给定$D_i$由DT到DGH的顶部的高度为$h_i$，DT在DGH中的不同策略的数量为$\frac{(h_i+...+h_n)!}{h_1!...h_n!}$。
+\paragraph{定理 5.2} 表$T_i = PT[QI]$，$T_j$、$T_z$是它的两个满足最小要求抑制的泛化，则有：$DV_{i,j} < DV_{i,z} \Rightarrow |T_j| \leq |T_z|$。直观来看，由于$T_z$更加“泛化”，它要满足抑制要求就只需要移除更少的条目。
+\paragraph{推理 5.1} 由定理5.1可知，$|T_j| \leq |T_z| \Rightarrow (|T_i| - |T_j|) \geq (|T_i| - |T_z|)$，则：$|T_i| - |T_j| \leq MaxSup \Rightarrow |T_i| - |T_z| \leq MaxSup$，反之，$|T_i| - |T_z| > MaxSup \Rightarrow |T_i| - |T_j| > MaxSup$。因此，如果一个具有$DV_{i,z}$的表$T_z$不能在抑制阈值MaxSup范围内提供k-anonymity，则所有具有$DV_{i,j}<DV_{i,z}$的表$T_j$也不能。
+\paragraph{DV的高度} 定义为在一个DV格VL中，从结点DV到格VL最小元素的距离。表示为$height(DV,VL)$。
+\paragraph{引理 5.1} 格$VL=<DV, \leq >$，$\forall DV_{i,j}, DV_{i,z} \in DV$，有：$DV_{i,j} < DV_{i,z} \Rightarrow height(DV_{i,j},VL) < height(DV_{i,j}, VL)$。
 
-
-
-
+\paragraph{} 通过以上引理，可以推理出实现k-anonymity的策略。设$\top$是VL的最大值，对每一个高度h，如果在高度h对应的DV不满足指定的泛化，那么任何小于高度h的DV都不满足指定的泛化。因此，我们可以通过二分搜索的方法找到满足指定泛化的最小高度h，并找到相应的DV。假设$h=height(\top,VL)$，我们首先评估高度$\left \lfloor \frac{h}{2} \right \rfloor$处的所有DV是否满足指定的泛化，如果满足，则记录下这些DV，然后在小于$\left \lfloor \frac{h}{2} \right \rfloor$高度处递归寻找是否有满足指定泛化的更小的DV。反之，则在大于$\left \lfloor \frac{h}{2} \right \rfloor$高度处寻找。此过程类似二分查找。
+\paragraph{} 此算法基于预定义的DGH，采用二分法查找DV。
 
 
 
