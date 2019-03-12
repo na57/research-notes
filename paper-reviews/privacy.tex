@@ -4,6 +4,7 @@
 \usepackage[UTF8]{ctex}
 \usepackage{graphicx} %插入图片的宏包
 \usepackage{float} %设置图片浮动位置的宏包
+\usepackage{enumerate}
 \usepackage[strings]{underscore}
 \usepackage{times}
 \usepackage{epsfig}
@@ -259,13 +260,75 @@
 \paragraph{} 此算法基于预定义的DGH，采用二分法查找DV。
 
 
+\section{Incognito: Efficient full-domain k-anonymity\cite{incognito}}
+\subsection{基本概念}
+\paragraph{频率集(frequency set)} 表T关于属性集Q的频率集是一个映射，从Q的一个值到此值在表T中的数量。在SQL中，类似于COUNT(*)子句。
+\paragraph{值泛化函数(value generalization function)} 定义为：$\gamma: D_i \rightarrow D_j$，是一个多对一的函数，用于表示值泛化关系，例如：$ \gamma(53712) = 5371*$。
+\paragraph{值泛化函数组合} 我们使用$\gamma^+$表示一个或多个值泛化函数的组合，它返回一个集合，包含多个泛化函数的值。例如，$537** \in \gamma^+(53712)$。
+\paragraph{全域泛化(full-domain generalization} \cite{samarati2001}所提的泛化只针对一个QI属性，而全域泛化指的是有一组QI属性$Q_1,...Q_n$和一组对应的值泛化函数$\phi_1,...\phi_n$，将表T的QI属性的值$q$替换为$a = \phi_i(q)$就可以得到其全域泛化V。
+\paragraph{文献\cite{samarati2001}的局限性} 文章定义了DV最小的泛化是最优泛化，有些时候这并不适用于某些应用，他们需要的是灵活性。例如，有的应用希望Sex字段不做任何泛化，而ZipCode则无所谓。而文章中的算法是无法满足这种灵活性的。文章中基于二分查找的算法不能保证找到最小的泛化，因此文本采用一个自底向上的宽度优先搜索算法，检查每一种可能的泛化，这样就可以找到最小的泛化，或找到格上的所有泛化。
+
+\subsection{Incognito}
+\paragraph{} 全域泛化通过连接表T和它的维度表，再对域属性进行恰当的投影来产生。例如，表$T=<A,...>$和属性A的维度表$<A_0,A_1,...>$，泛化表$T_1=<A_1,...>$可通过连接和投影操作来得到。
+\paragraph{}关于泛化维度，有几个关键的性质：
+	\subparagraph{泛化性质(generalization property)} 有表T，P、Q是表T的属性集，且$D_P <_D D_Q$。如果表T满足关于P的k-匿名，则也满足关于Q的k-匿名。
+	\subparagraph{汇总性质(rollup property)} 有表T，P、Q是表T的属性集，且$D_P <_D D_Q$。如果已知关于P的频率集$f_1$，则由$f_1$和$\gamma$可生成关于Q的频率集$f_2$。
+	\subparagraph{子集性质(subset property)} 有表T，P、Q是T的属性集，且$P \subseteq Q$。如果T满足关于Q的k-匿名，则T也满足关于P的k-匿名。（此性质有个推论：如果T不满足关于P的k-匿名，则T也不满足关于Q的k-匿名）
+	
+\subsubsection{基本Incognito算法}
+\paragraph{} 此算法从包含单个属性的QI集合的子集开始，逐个检查是否满足k-anonymity，并不断迭代增大子集。迭代过程如下：
+\begin{itemize}
+	\item 从$i=1$开始，考虑包含i个属性的QI集的子集，以及由这些子集出发的DGH。定义$C_i$为由包含i个属性的子集出发所构成的这些DGH中顶点的集合，$E_i$为边的集合。使用一个宽度优先搜索对$C_i$中的元素进行检查，并将生产的结果保存在$S_i$中。
+	\item 得到$S_i$之后，迭代进行第$i+1$次计算，直到$i>n$为止。
+\end{itemize}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{../images/incognito.png}
+	\caption{基本Incognito算法}
+	\label{incognito}
+\end{figure}
+\paragraph{}算法过程见图 \ref{incognito} 所示。以图所示数据为例，计算关于$\left \{Birthdate, Sex, Zipcode \right \}$的2-匿名泛化过程如下：
+\begin{enumerate}
+	\item i=1时
+	\begin{enumerate}
+		\item 包含1个属性的QI集的子集是：$\left \{ <B>,<S>,<Z> \right \}$（为描述方便，以下省略“<>”）
+		\item DGH：$B_0 \rightarrow B_1 \rightarrow B_2 \rightarrow B_3$($B_0$表示原始日期，$B_1$表示只使用“年月”表示的日期，$B_2$表示只使用“年”表示的日期，以此类推)、$S_0 \rightarrow S_1$、$Z_0 \rightarrow Z_1 \rightarrow Z_2 \rightarrow Z_3$。
+		\item 计算$C_1$: $ \left \{ B_0,...B_3,S_0,S_1,Z_0,...Z_3 \right \}$。
+		\item 以广度优先搜索方法检查泛化是否满足2匿名：
+		\begin{enumerate}
+			\item 搜索开始前：令结果集$S_1 = \Phi$（此处与文中算法相反，但原理一致）,将所有DGH的根节点加入到搜索队列中：$queue=\left \{ B_0, S_0, Z_0 \right \}$，下面开始迭代：
+			\item 取队列中第一个节点$node=B_0$得到：根据Count计算频率集 $\Rightarrow$ $B_0$不满足2匿名 $\Rightarrow$ 将$B_0$的直接泛化$B_1$加入到队列中：$queue=\left \{ S_0, Z_0, B_1 \right \}$
+			\item 取队列中下一个节点$node=S_0$得到：根据Count计算频率集 $\Rightarrow$ $S_0$满足2匿名 $\Rightarrow$ 将$S_0$的所有直接泛化加入到结果集$S_1$中得到：$S_1=\left \{ S_0, S_1 \right \}$。
+			\item 取队列中下一个节点$node=Z_0$得到：根据Count计算频率集 $\Rightarrow$ $Z_0$满足2匿名 $\Rightarrow$ 将$Z_0$的所有直接泛化加入到结果集$S_1$中得到：$S_1=\left \{ S_0, S_1, Z_0, Z_1, Z_2, Z_3 \right \}$。
+			\item 取队列中下一个节点$node=B_1$得到：根据父节点和$\gamma$函数计算频率集 $\Rightarrow$ $B_1$满足2匿名 $\Rightarrow$ $B_1$的所有直接泛化加入到结果集$S_1$中得到：$S_1=\left \{ S_0, S_1, Z_0, Z_1, Z_2, Z_3, B_1,B_2,B_3 \right \}$。
+		\end{enumerate}
+	\end{enumerate}
+	\item i=2时
+	\begin{enumerate}
+		\item 包含2个属性的QI集的子集是：$\left \{ <B,S>,<S,Z>,<B,Z> \right \}$
+		\item 计算$C_2$，$C_i$是$S_{1-1}$的超集，可由$S_{1-1}$扩展而来，另外，$C_i$中的元素应当按DGH的height排序。
+		\item 以下的步骤与$i=1$时类似。
+	\end{enumerate}
+	\item $i=3$的步骤与前面一致。
+	\item 此算法的最终结果$S_3$是最终泛化结果的泛化过程。
+\end{enumerate}
+
+\subsubsection{完备性}
+\paragraph{} 对于k-匿名全域泛化来讲，基本Incognito算法是完备的。
+
+\subsection{k-匿名模型的分类}
+\subsubsection{全局重编码模型(global recoding models)}
+
+\paragraph{基于结构的单维重编码(hierarchy-based single-demension recoding)} 单维重编码模型为每一个QI集的属性$Q_i$定义一个泛化函数$\phi_i$。不同的单维重编码模型的区别在于泛化函数的不同。
+
+\paragraph{基于分区的单维重编码(Partition-based single-dimension recoding)} 在单维有有序分区模式下，我们假设每一个属性的值域$D_{Q_i}$都能表示为一个全序集，$\phi_i$将属性值映射到这个全序集。
+
+\paragraph{基于结构的多维重编码(hierarchy-based multi-dimension recoding)} 多维重编码模型定义一个单一的函数$\phi: <D_{Q_1} \times ... \times D_{Q_n} \rightarrow D'$，用来重编码QI。
+
+\paragraph{基于分区的多维重编码} 同样，这也是单维模型的扩展。
 
 
-
-
-
-
-
+\subsubsection{局部重编码模型(local recoding models)}
 
 
 
