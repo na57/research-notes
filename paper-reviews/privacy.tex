@@ -330,6 +330,85 @@
 
 \subsubsection{局部重编码模型(local recoding models)}
 
+\section{Transforming data to satisfy privacy constraints\cite{iyengar2002} }
+\subsection{Usage Based Metrics}
+\paragraph{} 我们考虑构造一个分类模型，表格的其中一个列用于存储分类标签。用$G(r)$表示行$r$所属的等价类。由于泛化的原因，一个等价类内的行有可能分属于不同的分类类别。因此，我们可以通过惩罚包含不同分类类别的等价类来度量数据质量。
+\paragraph{分类度量} 定义为对每一个行的惩罚均值：
+\begin{equation}
+	CM = \frac{\sum_{\mbox{all rows}}penalty(r)}{N}
+\end{equation}
+\begin{equation}
+	penalty(r) = 
+		\left\{\begin{matrix}
+				1 & \mbox{if r is suppressed} \\ 
+				1 & \mbox{if} class(r) \neq magority(G(r)) \\ 
+				0 & otherwise
+		\end{matrix}\right.
+\end{equation}
+如果行$r$被隐匿或它的分类类别$class(r)$其所在等价类的主分类类别(占多数的分类类别)，则其惩罚为1，否则为0。如图 \ref{cm-example} 所示，行$(X=9,Y=9)$的惩罚为1，因为它的分类类别不是所在等价类的主分类类别。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../images/cm-example.png}
+	\caption{DGH的格表示}
+	\label{cm-example}
+\end{figure}
+
+\section{Data privacy through optimal k-anonymization\cite{bayardo2005} }
+\subsection{Introduction}
+\paragraph{} 本文提出一种发现给定数据集的最优化k-匿名的实用方法。此方法与传统方法的不同之处在于：
+\begin{enumerate}
+	\item 一般方法通常对给定数据集系统地或使用贪心方法进行泛化，直到满足k-匿名。而本文的算法则是首先给定一个完全泛化的数据集（所有数据条目都一样），然逐渐具体化数据，直到满足最小k-匿名。
+	\item 本文基于树搜索策略进行基于成本的剪枝和动态搜索安排(dynamic search rearrangement)。
+	\item 提出一种新颖的数据管理策略，以减少评估匿名状态(anoymization)成本。
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+\section{Mondrian Multidimensional K-Anonymity\cite{mondrian} }
+\subsection{Introduction}
+\paragraph{本文贡献} 本文的贡献主要是一种新的多维重编码模型和一种贪心划分算法，其优点是：
+	\begin{itemize}
+		\item 更有效率，其时间复杂度为$O(nlogn)$;
+		\item 产生的结果质量更高。
+	\end{itemize}
+\paragraph{一般目的质量度量} 最简单一种质量度量方法是基于等价类的数量。
+
+\subsection{Multidimensional Global Recoding}
+\paragraph{全局重编码} 通过对QI属性的值域进行泛化来实现匿名化，它可进一步分为两类：单维全局重编码和多维全局重编码。多维全局重编码可同时用于离散数据(categorical data)和连续数据(numeric data)，而单维划分模型则用于连续数据。
+\paragraph{划分模型} 单维划分将一个属性的值域划分为一个互不重叠的集合。单维划分可扩展至多维划分，其定义为一堆d维元组$(p_1,...p_d),(v_1,...,v_d) \in D_{X_1} \times ... \times D_{X_d}$存在$ \forall i, p_i \leq v_i$。
+\subsection{Multidimensional Local Recoding}
+
+\subsection{A Greedy Partitioning Algorithm}
+
+\subsection{Workload-Driven Quality Measurement}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
