@@ -361,6 +361,80 @@
 	\item 本文基于树搜索策略进行基于成本的剪枝和动态搜索安排(dynamic search rearrangement)。
 	\item 提出一种新颖的数据管理策略，以减少评估匿名状态(anoymization)成本。
 \end{enumerate}
+\subsubsection{基础}
+\paragraph{属性的值域} 数据元组中，第i个属性的值域表示为$\Sigma_i$。
+\paragraph{属性泛化(attribute generalization)} 对一个值域为$\Sigma$的有序属性来说，其属性泛化是将其值域划分为$<I_1,...I_m>$，这种划分使得属性的每个值都出现在某个划分中，并且$I_i$中的每个值都出现在其前一个划分$I_j$的每个值之前，也就是说，划分互不交叠。例如，对于属性age，其值域是[1,30]的整数，其属性泛化可以表示为$<[1,10],[11,20],[21,30]>$。为方便，我们通常使用每个区间的最小值表示这个区间，上述例子就可以表示为：$ \left \{ 1,11,21 \right \}$。
+\paragraph{属性泛化的应用} 属性泛化a可以应用于属性值v上，表示为$a(v)$，其返回的是值v所属的区间。例如，对于属性age，a(2)返回的是[1,10]。数据集D的匿名化可以由D中各个属性的一组属性泛化$\left \{ a_1, ..., a_m \right \}$组成，可看作是对D转换为另一个数据集：$D' = \left \{ <a(v_{1,1}),...,a(v_{1,m})>,...,<a(v_{n,1}),...,a(v_{n,m})> \right \}$，$v_{i,j}$表示第i条数据的第j个属性值。
+\paragraph{度量方法} 每一种匿名化方法都需要有一个成本度量方法。成本度量一般是对泛化或隐匿操作进行统计信息损失。有两种主要度量方法：
+	\subparagraph{分辨度量(discernibility metric)} 它针对每一条数据的辨别度进行其进行惩罚。对结果表中的每一个等价类，若它的大小为$j$，则其中每一条数据的惩罚也为$j$，若一条数据被隐匿，则其惩罚为$|D|$。即：
+	\begin{equation}
+		C_{DM}(g,k)= \sum_{\forall E \enspace s.t. \enspace |E|\geq k} |E|^2 + \sum_{\forall E \enspace s.t.\enspace |E| < k} |D||E|
+	\end{equation}
+	\subparagraph{分类度量(classification metric)} 它根据等价类中每条数据的分类标签进行惩罚，具体见\cite{iyengar2002}：
+	\begin{equation}
+		C_{CM}(g,k)=\sum_{\forall E \enspace s.t. \enspace |E|\geq k} (|minority(E)|) + \sum_{\forall E \enspace s.t.\enspace |E| < k} |E|
+	\end{equation}
+
+\subsection{匿名化的集合表示}
+\paragraph{} 参照属性泛化，我们可以在所有属性上强加一个全排序(total order），使得当$i > i$时，任何一个$\Sigma_i$中的值都在$\Sigma_j$中的值之前。如图\ref{total-order-attributes} 所示。根据属性泛化的表示方法，由于每个值域中的最小值都必须出现泛化器(generalizer)中，因此这些值可以被省略。如图\ref{total-order-attributes} 中标注“*”的那些。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{../images/total-order-attributes.png}
+	\caption{所有属性的全序表示}
+	\label{total-order-attributes}
+\end{figure}
+\paragraph{匿名化集合表示} 我们用$v_{l_i}$表示第i个属性的最小值，我们可以这样表示匿名化：
+\begin{equation}
+	\Sigma_{all} = (\Sigma_1 \setminus v_{l_1})\cup ... \cup (\Sigma_m \setminus v_{l_m})
+\end{equation}
+特别地，空集合$\left \{ \right \}$表示最一般(most general)匿名化，它只包含一个等价类；$\Sigma_{all}$表示最具体(most specific)匿名化
+	\subparagraph{示例} 如图\ref{total-order-attributes} ，考虑匿名化$\left \{ 2,7,9 \right \}$，加上蕴含的（被省略的）最小值就是：$\left \{ 1,2,4,6,7,9 \right \}$，也就是说，将三个属性分别划分为：Age:<[10-29],[30-49]>
+\subsection{A Systematic Search Strategy}
+\paragraph{} 我们将确定最优化k匿名的问题界定为一个以最小代价在匿名化集合$\Sigma_{all}$中进行搜索的问题。集合枚举(set-enumeration)搜索策略是从给定的集合中以树形结构系统地枚举所有子集的最直接的一种方法。
+	\subparagraph{头集(head set)} 在集合枚举树中，任何节点都能够被所枚举的集合节点表示，这些节点成为头集。
+	\subparagraph{尾集(tail set)} 能够被加入到头集中的值的集合成为尾集。
+	\subparagraph{全集(allset)} 由头集和尾集组成的集合成为全集。
+\paragraph{} 由于集合枚举是系统和完全的，通过此算法我们可以保证得到最佳的匿名化。不幸的是，匿名化集合的大小是$2^{|\Sigma|}$。
+
+\subsubsection{Pruning Overview}
+\paragraph{} 要减小搜索空间，最好的办法是剪枝。搜索树首先尝试减掉节点，如果不行则尝试减掉节点的尾集元素。是否剪枝则通过计算成本下界(lower-bound)来决定。(如果成本下界比目前最优成本还高，则可以剪去)
+\subsubsection{Computing Cost Lower-Bounds}
+\paragraph{隐匿产生的penalty} 如果匿名方案H隐匿了元组集S，则H的任何后代节点所隐匿的元组集一定保护S：
+	\subparagraph{观察5.1} 在搜索树中，节点H隐匿元素是H的后代节点所隐匿节点的子集。
+对分辨度量来讲，H的后代的隐匿操作的惩罚就是$|D| \cdot |S|$；对分类度量，其惩罚是$|S|$。
+
+\paragraph{泛化产生的penalty} 泛化方案的后代更加具体，产生的等价类更多：
+	\subparagraph{观察5.2} 如果一个节点H，其上的全集是A，则由A产生的等价类是由H的后代产生的等价类的子集。
+
+\paragraph{定义分辨度量} 定义$E_{A,t}$是含有元素t且被全集A泛化的等价类。容易看出，E中的元组t最小的惩罚应当时$|E|$，当$|E| < k$时，其惩罚可取$k$。因此，分辨度量定义为：
+\begin{equation}
+	LB_{DM}(H,A) = \sum_{\forall t \in D} \left\{\begin{matrix}
+						|D| & \mbox{when t is suppressed by H,}
+						\\ 
+						\max(|E_{A,t}|, k) & otherwise
+						\end{matrix}\right.
+\end{equation}
+
+\paragraph{定义分类度量} 定义为：
+\begin{equation}
+	LB_{CM}(H,A) = \sum_{\forall E \mbox{induced by A} } \left\{\begin{matrix}
+						|D| & \mbox{when E is suppressed by H,}
+						\\ 
+						|minority(E)| & otherwise
+						\end{matrix}\right.
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -491,15 +565,96 @@
 \paragraph{} 以上讨论都基于一个基本的假设：每条数据只有一个敏感字段。
 \paragraph{Multi-Attribute l-diversity} 若把$S_i$之外的所有S都当做Q还满足l-diversity，那么表T就满足l-diversity。
 
+\section{差分隐私保护及其应用\cite{熊平2014}}
+\subsection{引言}
+\paragraph{基于分组的隐私模型} “k-anonymity及其扩展模型被称为基于分组的隐私模型”，这些模型主要存在两个主要的缺陷：
+\begin{itemize}
+	\item “并不能提供足够的安全保障，他们总是因新型攻击的出现而需要不断完善”。“出现这一局面的原因在于，基于分组的隐私保护模型的安全性与攻击者所掌握的背景知识相关，而所有可能的背景知识很难被充分定义。”
+	\item “这些早期的隐私保护模型无法提供一种有效且严格的方法来证明其隐私保护水平，因此当模型参数改变时，无法对隐私保护水平进行定量分析。”
+\end{itemize}
+差分隐私能够解决传统隐私保护模型的两个缺陷。
+\subsection{差分隐私保护模型}
+\paragraph{基本思想} “设对数据集D进行任意操作f，得到f(D)，如果将A从D中删除后，得到的结果仍然为f(D)，则可以认为A的信息并没有因为包含在D中而产生额外的风险。”
+
+\subsubsection{基本概念}
+\paragraph{隐私保护机制} “对D的各类映射函数被定义为查询，用$F=\left \{ f_1, f_2,... \right \}$表示一组查询，算法M对查询F的结果进行处理，使之满足隐私保护的条件，此过程称为隐私保护机制。”
+\paragraph{邻接数据集} “属性结构相同的数据集D和D'，两者的对称差记为$D\Delta D'$，若$|D\Delta D'|=1$，则称D和D'为邻接数据集。”
+\paragraph{差分隐私} 设$P_M$是算法M所有可能的输出构成的集合，$S_M$是$P_M$子集，若算法满足：
+\begin{equation}
+	Pr[M(D)\in S_M] \leq e^\varepsilon \times Pr[M(D')\in S_M]
+\end{equation}
+则称算法M提供$\varepsilon$-差分隐私保护。
+\paragraph{隐私保护预算} 上式中的$\varepsilon$称为隐私保护预算，用来控制算法M在D和D'上获得相同输出的概率比值，它通常取比较小的值。$\varepsilon$越小，表示隐私保护水平越高，当$\varepsilon$为0时，保护水平最高。
+\paragraph{敏感度} “差分隐私保护可以通过在f的返回值中加入噪声来实现。敏感度是决定加入噪声量大小的关键参数。”
+\paragraph{全局敏感度} 设函数$f:D\rightarrow R^d$，对于邻近数据集D和D'，函数f的全局敏感度定义为：
+\begin{equation}
+	GS_f=\max_{D,D'} \left \| f(D)-f(D') \right \|_1
+\end{equation}
+“函数的全局敏感度由函数本身决定。当GS较大时，必须在函数输出中添加足够大的噪声才能保证隐私安全，导致数据可用性较差。”
+\paragraph{局部敏感度} 设函数$f:D\rightarrow R^d$，对于邻近数据集D和D'，函数f在D上的局部敏感度定义为：
+\begin{equation}
+	LS_f(D) = \max_{D'} \left \| f(D)-f(D') \right \|_1
+\end{equation}
+“局部敏感度由函数f及给定数据集D共同决定。”GS和LS之间的关系可以表示为：
+\begin{equation}
+	GS_f=\max_D(LS_f(D))
+\end{equation}
+\paragraph{平滑上界} “LS在一定程度上体现了数据集的数据分布特征，直接应用会泄露数据集中的敏感信息。因此，LS的平滑上界被用来与LS一起确定噪声量的大小。”对于$\beta>0$，若函数$S:D\rightarrow R$满足$S(D) \geq LS_f(D)$且$S(D) \leq e^\beta \times S(D')$，则称S是f的LS的$\beta$-平滑上界。
+\paragraph{平滑敏感度} 函数f的$\beta$-平滑敏感度定义为：
+\begin{equation}
+	S_{f,\beta}(D)=\max_{D'}(LS_f(D')\times e^{-\beta |D\Delta D'|}
+\end{equation}
+\subsubsection{差分隐私保护算法的组合性质}
+\paragraph{} “一个复杂的隐私保护问题，通常需要多次应用差分隐私保护算法，为了保证整个过程的隐私保护水平控制在给定的预算之内，需要合理地将全部预算分配到整个算法的各个步骤中。”
+\paragraph{序列组合性} “设有算法$M_1,...,M_n$，其预算分别是$\varepsilon_1,...,\varepsilon_n$，那么对同一个数据集D，由这些算法构成的组合算法$M(M_1(D),...,M_n(D))$提供$\sum_{i=1}^n \varepsilon_i$-差分隐私保护。”也就是说，“一个差分隐私保护算法序列构成的组合算法，其提供的隐私保护水平为全部预算的总和”。
+\paragraph{并行组合性} “设有算法$M_1,...,M_n$，其预算分别是$\varepsilon_1,...,\varepsilon_n$，那么对于不相交的数据集$D_1,...,D_n$，由这些算法构成的组合算法$M(M_1(D_1),...,M_n(D_n))$提供$(\max \varepsilon_i)$-差分隐私保护”。此时算法系序列构成的组合算法提供的隐私保护水平取决于算法序列中的保护水平最差者。
+\subsubsection{实现机制}
+\paragraph{} 根据差分隐私保护的要求，不同的问题有不同的实现方法，即机制。最基础的两种机制是Laplace机制和指数机制。
+\paragraph{Laplace分布} 两个指数型随机变量之差满足Laplace分布。其概率密度为：
+\begin{equation}
+	f(x|\mu,b) = \frac{1}{2b}e^{-\frac{|x-\mu|}{b} }
+\end{equation}
+其图像呈尖沙堆状，如图\ref{laplace-distribution} 所示。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{../images/laplace-distribution.png}
+	\caption{Laplace分布概率密度函数}
+	\label{laplace-distribution}
+\end{figure}
+
+\paragraph{Laplace机制} Laplace机制仅适用于数值型结果的保护，通过向查询结果中加入服从Laplace分布的随机噪声来实现差分隐私保护。令设数据集D，函数f的敏感度为$\Delta f$，那么随机算法$M(D)=f(D)+Y$提供$\varepsilon$-差分隐私保护，其中$Y \sim Lap(\frac{\Delta f}{\varepsilon})$为随机噪声，服从尺度为$\frac{\Delta f}{\varepsilon}$的Laplace分布。
+
+\paragraph{指数机制} 适用于非数值型查询结果。设随机算法M，输出为一实体对象$r \in Range$，函数$q(D,r)\rightarrow R $为可用性函数，$\Delta q$为函数$q(D,r)$的敏感度。若算法M以正比于$e^{\frac{\varepsilon q(D,r)}{2\Delta q}}$的概率从Range中选择并输出r，那么算法M提供$\varepsilon$-差分隐私保护。
+
+\subsection{基于隐私保护的数据发布(PPDR)}
+\paragraph{} PPDR研究的问题是如何在满足差分隐私的条件下保证发布数据或查询结果的精确性。根据实现环境可分为交互式数据发布和非交互式数据发布两种。
+\subsubsection{交互式数据发布}
+\paragraph{} “在交互式环境下，用户向数据管理者提出查询请求，数据管理者根据查询请求对数据集进行操作并将结果进行必要的干扰后反馈给用户，用户不能看到数据集全貌，从而保护数据集中的个体隐私”。具体可描述为：“给定数据集D和查询集合F，需寻求一种数据发布机制，使其能够在满足差分隐私保护的条件下逐个回答F中的查询，直到耗尽全部隐私保护预算”。“对于F中的任意f，设定一个足够小的实数$\delta$，查询结果精度$\alpha$应满足：
+\begin{equation}
+	Pr_{f\in F}[|f(D)-M(f(D))|\leq \alpha]\geq 1-\delta
+\end{equation}
+其中$f(D)$是查询结果，$M(f(D))$是对M的干扰结果。”
+\subsubsection{非交互式数据发布} “在非交互式环境下，数据管理者针对所有可能的查询，在满足差分隐私的条件下一次性发布所有查询的结果。或者，数据管理者发布一个原始数据集的“净化”版本，这是一个不精确的数据集，用户可对该版本的数据集自行进行所需的查询操作”。可表述为：“给定D和F，需寻求一个数据发布机制，使其能够在满足差分隐私保护的条件下一次性回答F中所有的查询”。
+
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
 \end{document}
 
+\section{Privacy-preserving deep learning\cite{shokri2015ppdl}}
+\subsection{Introduction}
+\paragraph{} 本文提出一种协调深度学习系统，用于权衡效用和隐私。系统运行多方使用自己的输入数据合作训练一个神经网络模型，而不需要共享。此技术的关键创新是，在训练期间选择性共享模型参数。参数共享运行多个参与者在没有显式的输入数据的共享的情况下，互相利用其它人的模型计算结果。
 
+\subsection{相关工作}
+\subsubsection{Privacy in ML}
+\paragraph{} 当多方利用自有数据协同执行机器学习任务时，基于安全多方计算（secure multi-party computation, SMC）的技术帮忙我们计算的中间步骤的隐私。
 
-
-
-
+\subsection{Distributed Selective SGD}
+\paragraph{} 本文方法的核心是分布式的、协作的深度学习协议，它基于以下观察结果：
+\begin{itemize}
+	\item 梯度下降的过程中，对不同参数的更新本质上是独立的；
+	\item 不同的训练数据集作用于不同的参数；
+	\item 不同的特征对目标函数的作用并不相等。
+\end{itemize}
 
 
 
