@@ -47,523 +47,10 @@
 
 %%%%%%%%% TITLE
 
-\title{论文阅读笔记：隐私}
+\title{论文阅读笔记：差分隐私}
 \author{纳文琪}
 \maketitle
 
-
-\section{Big Privacy: Challenges and Opportunities of Privacy Study in the Age of Big Data\cite{yu2016big}}
-
-\subsection{引言}
-\paragraph{} 最近研究表明，在大数据时代简单地匿名化数据集已无法再抵御针对隐私的攻击。保护隐私最直接的办法就是移除数据集中的ID，然而，事实表明这并不奏效。本质上，一个ID表示的是被描述对象的一组特征，但是实际上，我们依靠一个人的多种特征而不是ID来识别这个人。
-\paragraph{隐私研究的两个方面} 隐私研究集中在两个方面：内容隐私（content privary）和行为隐私（interaction privacy）。
-	\subparagraph{内容隐私} 攻击者根据受害者的一些知识背景从匿名或加密的数据集中识别受害者身份。
-	\subparagraph{行为隐私} 攻击者更关注受害者的行为。
-\paragraph{} 现代隐私研究主要关注两个方面：数据聚类（data clustering）和隐私框架（privacy framework）。
-
-
-\subsection{基础知识}
-\paragraph{隐私参与者} 包括：数据生产者、使用者、管理者、攻击者。
-\paragraph{数据操作} 包括：收集、清洗（anonymizing）、交换（communicating）。
-\paragraph{数据属性的类型} 包括：
-	\subparagraph{显示标识（explicit identifier）} 比如身份证号、特定学校里的学号等；
-	\subparagraph{准标识（quasi-identifier）} 通过关联其他数据集就可以确定用户的属性，比如性别、年龄等。我们一般将一个记录里面的所有准标识字段称为“qid”。拥有相同qid的值的一组记录被称为一个等价类（equivalent class）。
-	\subparagraph{敏感信息（sensitive information）} 用户希望保护的那部分数据；
-	\subparagraph{其他} 用户的其他信息。
-
-\subsection{隐私研究的成果} 
-\subsubsection{数据聚类方面}
-\paragraph{} 数据聚类方面的研究成果主要包括：k-anonymity、l-diversity、t-closeness等。
-\paragraph{k-anonymity} 首先，为保护隐私，我们必须将数据的ID全部移除，这样才能避免特定用户被识别。然而即便所有ID被移除，攻击者还是有可能通过诸如链接外部数据库等方式，根据qid来识别用户。k-anonymity方法的基本原则是：确保含有相同qid组数据的记录在数据集中至少出现k次，也就是说，每个等价类至少有k个记录。这样就可以使得攻击者通过qid识别特定用户的概率变为$\frac{1}{k}$，当存在一个很大的k值的时候，会对用户的识别产生一个很大的信息损失，从而达到隐私保护的作用。k-anonymity方法主要是用于处理准标识字段上的隐私保护问题,但不能处理敏感数据。攻击者可能使用同质攻击（homogeneity attach）或背景知识攻击（backgroud knowledge attack）来破解。
-\paragraph{l-diversity} l-diversity方法可以克服k-anonymity方法的缺点。它要求数据集“对每一个qid的值，确保敏感数据字段至少有l个不同的值”。为了实现它，我们需要增大（还是减小？）敏感信息字段的颗粒度或增加噪声。某些特殊的时候，l-diversity会起到反作用，他会释放更多的信息增益给攻击者。
-\paragraph{t-closeness} 可以修复l-diversity的脆弱性。它的基本思想是：对于任何一个等价类，保证它的值的分布被限定在t范围内。
-
-\subsubsection{隐私框架方面}
-\paragraph{微分隐私（differential privacy）} 在了解用户背景知识的情况下，攻击者可能会通过多次进行统计查询来获得期望的信息。防范策略是：对两个差别很小的数据集进行查询，其结果差别也应该很小，这样就可以限制攻击者获得的信息增益。
-\paragraph{微分可识别性（differential identifiability）}
-\paragraph{成员隐私（membership privacy）} 
-
-\subsection{隐私研究的学科}
-
-\subsection{隐私研究的数学描述}
-\paragraph{匿名系统} 是一个映射函数：$F = X \rightarrow Y$，$X = \left \{ X_1,X_2,...,X_n \right \}$是原始数据，$Y=\left \{ Y_1,Y_2,...,Y_m \right \}$是系统的输出，对于攻击者，其目的是建立一个映射：$G: Y \rightarrow \hat X$，尽可能地从输出还原原始数据。
-\paragraph{隐私保护系统的两个目的} 被描述为utility和privacy，这也是匿名系统F的两个关键指标。
-	\subparagraph{utility} 使用 distorion D来度量，抽象地表示为：
-	\begin{equation}
-		D=\lambda(X;Y)
-	\end{equation}
-	D有很多种度量方法，例如，可以使用均方来表示。
-	\subparagraph{privacy} 使用 leakage L 来度量，抽象地表示为：
-	\begin{equation}
-		L=\lambda(X;\hat X)
-	\end{equation}
-	L通常使用互信息来度量，即：
-	\begin{equation}
-		L=I(X,\hat X)
-	\end{equation}
-	
-\paragraph{} 给定两个阈值$D_0$和$L_0$，匿名系统可作为一个优化问题：
-\begin{equation}
-  \begin{split}
-  	optimize F \\
-	s.t. \ D &\leq D_0 \\
-	L &\leq L_0
-  \end{split}
-\end{equation}
-
-
-\subsection{隐私度量（Privacy Measurements）}
-\paragraph{}隐私的度量至今都没有太清晰的方法。现有以下几种度量方法：
-
-	\subsubsection{相对度量（Relative Measurement）}
-	\paragraph{} 其思想是：首先给定一个标准（benchmark），再度量研究对象到此标准的距离。比较流行的距离计算方式是Kullback-Leibler距离（相对熵）。
-	\paragraph{} KL距离是基于一阶统计的度量方法，而二阶方法可以度量得更加精确。
-
-	\subsubsection{信息论度量（Information Theoretic Measurement）}
-	\paragraph{} 对于一个投票系统，定义三个随机变量V、S、E，分别表示投票者所投的票、来自投票系统以外的信息、攻击者由投票系统中获得的信息。
-	\paragraph{完美隐私（perfectly privacy）} 定义为：在S条件下，V和E独立。即：$p_{V|S}(v;s) = p_{V|S,E}(v;s,e)$。
-	\paragraph{隐私损失总量（amount of privacy loss）} 定义为：
-	\begin{equation}
-		L = \max (H(V|S) - H(V|S,E))
-	\end{equation}
-	度量隐私可能纰漏的程度。
-	
-	\subsubsection{Unicity Measure}
-
-\subsection{隐私数学模型}
-
-	\subsubsection{k-anonymity 模型}
-	\paragraph{} 定义数据表$T=\left \{ t_1, t_2,...,t_n \right \}$ 是数据行的集合，$A=\left \{ A_1, A_2,...,A_n \right \}$ 是数据的属性集，$t_i[A_j]$表示元组$t_i$的属性$A_j$的值，$C=\left \{ C_1,C_2,...,C_k \right \} \subseteq A $是子属性集。定义 $T[C] = \left \{ t[C_1],t[C_2],...,t[C_k] \right \}$是t在C上的映射，$QI$为所有准标识符的集合。
-	\paragraph{} 我们说一个表T满足k-anonymity，如果它满足，对于每一个元组$t \in T $ 都存在$k-1$个其他的元组$t_{i_1},t_{i_2},...,t_{i{k-1}} \in T $使得 $t[C]=t_{i_1}[C]=t_{i_2}[C]=...=t_{i_{k-1}}[C], C \subseteq QI$。也就是说，任何一组具有相同属性值的准标识符在表中至少出现k次。
-	\subsubsection{l-diversity 模型}
-	\subsubsection{t-closeness 模型}
-	\subsubsection{Differential Privacy 框架}
-
-
-\section{k-anonymity: A model for protecting privacy \cite{k-anonymity}}
-
-\subsection{背景}
-\paragraph{} 人们希望大量数据用于研究和分析，但同时又保证不泄露隐私，即同时满足“数据利用（utility）”和“保护隐私（privacy）”两个要求。通常，人们在发布数据时，会将数据集的标识符（如姓名、身份证号等）删去，从而使得数据集中的个体（individual）不能够被攻击者“重新识别（re-identify）”。然后，在很多情况下，利用非标识符字段仍然可以重新识别出个体。例如，研究显示，87\%的美国人可以通过邮编、性别和生日被识别出来。k-anonymity提供了一种避免此问题的框架。
-
-\subsection{定义}
-\paragraph{纰漏（disclosure）}指的是数据明显地或通过推理被意外地泄露。
-\paragraph{纰漏控制（disclosure control）} 的目的是去识别或限制发布数据中的纰漏，也就是说，确保发布数据具有充分的匿名性。
-\paragraph{准标识符（Quasi-identifier）} 如果数据表中的一组属性，可以通过与外部属性连接重新识别数据表中的个体，则称这组属性为准标识符。
-\paragraph{准标识符的形式化定义} 令U为数据个体的全集，$T(A_1,...,A_n)$为数据表，存在两个映射$f_c: U \rightarrow T$和$f_g: T \rightarrow U'$，其中$U' \subseteq U$。表T的准标识符$Q_T$是一个属性集$\left \{ A_1,...,A_j\right \} \subseteq \left \{ A_1,...,A_n \right \}$，满足 $\exists p_i \in U $使得 $f_g(f_c(pi)[Q_T]) = p_i$。
-
-\subsection{模型}
-\paragraph{k-anonymity} 有表T和它的准标识符$Q_T$，当且仅当$T[Q_T]$中的每一行在$T[Q_T]$中至少出现k次时，我们说T满足k-anonymity。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\textwidth]{../images/k-anonymity-example.png}
-	\caption{}
-	\label{}
-\end{figure}
-
-\subsection{攻击k-anonymity}
-\paragraph{未排序匹配(Unsorted matching)攻击} 如果发布的表的数据的顺序固定，就可以根据这种固定顺序，关联多个发布的表来获取敏感信息。避免这种攻击很简单，只需要对数据进行乱序操作后再发布即可。
-\paragraph{互补发布攻击（Complementary release attack）} 通常情况下，我们不会将所有发布的字段都列为准标识符，这样的话，如果同意数据表被发布了多个版本，攻击者就可能会通过关联多个发布的数据表来攻击k-anonymity。
-
-\paragraph{时间攻击(Temporal attack)} 如果数据集是动态变化的，由于每个时间的数据表都可能不一样，而不同时间点之间的数据表没有规则限制，因此攻击者有可能通过关联两个不同时间点数据集来识别数据表中的个体，从而实现对k-anonymity的攻击。两个不同时间点的数据表就与上面所讲的两个不同版本的数据集类似。
-
-\section{Protecting respondents identities in microdata release \cite{samarati2001}}
-\paragraph{} 本文提出了一种实现k-anonymity的泛化算法。
-
-\subsection{泛化数据(Generalizing data)}
-\subsubsection{泛化关系(Generalization relationships)}
-\paragraph{泛化关系} 是关于全体值域的集合Dom上的一个偏序，记作$ \leq_D $。它满足两个条件：
-\begin{itemize}
-	\item $ \vee D_i,D_j,D_z \in Dom  : D_i \leq_D D_j,  D_i \leq_D D_z \Rightarrow D_j \leq_D D_z \vee D_z \leq_D D_j $ (每个$D_i$最多只有一个直接泛化域)
-	\item 域中的所有值最终都被泛化到一个单一值（单一最大值）
-\end{itemize}
-\paragraph{域泛化结构(domain generalization hierarchy, $DGH_D$} 由泛化关系得到的一个全序结构。
-\paragraph{值泛化关系(value generalization relationships)} 是与DGR类似的，关于某个值域D下的所有值的一个偏序，记作$ \leq_V$
-\paragraph{值泛化结构(value generalization hierarchy, $VGH_D$)} 与$DGH_D$类似，可以用树来表示，其叶子节点就是域D中的值。
-\paragraph{} 值泛化关系和值泛化结构可以看做是域泛化关系和域泛化结构更低层次的抽象。其示例如图 \ref{dgh-vgh} 。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.95\textwidth]{../images/dgh-vgh.png}
-	\caption{}
-	\label{dgh-vgh}
-\end{figure}
-\paragraph{DGH的格表示} 给定一个域元组$DT=<D_1,...,D_n>$，我们可以定义关于DT的域泛化结构为$DGH_{DT}=DGH_{D_1} \times ... \times DGH_{D_n}$，即DT的DGH是其每个元素的DGH的笛卡尔积。由于每个$DGH_{D_i}$都是全序的，因此$DGH_{DT}$是一个关于DT的格(lattice)，其最小值(DT)在底部，最大值在顶部。如图 \ref{dgh-lattice}所示。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.3\textwidth]{../images/dgh-lattice.png}
-	\caption{DGH的格表示}
-	\label{dgh-lattice}
-\end{figure}
-
-\paragraph{泛化策略(generalization strategy)} $DGH_{DT}$格中的一组边及其节点组成的集合成为泛化策略。如图 \ref{generalization-strategy} 所示。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{../images/generalization-strategy.png}
-	\caption{DGH的格表示}
-	\label{generalization-strategy}
-\end{figure}
-
-\subsubsection{Generalized table and minimal generalization}
-\paragraph{属性的值域} 定义$dom(A_i,T)$表示属性$A_i$在T中的值域。
-\paragraph{泛化表(Generalized Table)} 令$T_i(A_1,...,A_n)$和$T_j(A_1,...,A_n)$是具有相同属性（字段）的两个表，若满足以下条件则称$T_j$是$T_i$的泛化，记作$T_i \preceq T_j$：
-\begin{itemize}
-	\item $|T_i| = |T_j|$(两个表中的数据量一致)
-	\item $\forall A_z \in \left \{ A_1,...,A_n \right \}: dom(A_z, T_i) \leq dom(A_z, T_j)$ (每个属性满足一致的域泛化关系)
-	\item 每个属性值满足一致的值泛化关系
-\end{itemize}
-\paragraph{距离向量(distance vector)} 两个表$T_i$、$T_j$满足$T_i \preceq T_j$，从$T_i$到$T_j$的距离向量记作$DV_{i,j}=[d_1,...,d_n]$，其中$d_z$是$DGH_{D_z}$中$D_i$到$D_j$的距离。
-\paragraph{距离向量的偏序关系} 两个距离向量$DV$、$DV'$，如果所有的$d_i \leq d_i'$，则有$DV \leq DV'$。因此，域泛化结构可以看做是距离向量的格，如图 \ref{lattice-on-dv} 所示。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\textwidth]{../images/lattice-on-dv.png}
-	\caption{DGH的距离向量格表示}
-	\label{lattice-on-dv}
-\end{figure}
-
-\paragraph{k-minimal 泛化(generalization)} 两个表$T_i$、$T_j$满足$T_i \preceq T_j$，如果$T_j$满足下列两个条件就称$T_j$是$T_i$的一个k-minimal泛化：
-\begin{itemize}
-	\item $T_j$满足k-anonymity
-	\item $\forall T_z: T_i \preceq T_z satisfies k-anonymity \Rightarrow \neg (DV_{i,z} \leq DV_{i,j})$(不存在任何一个比$T_j$小，而且满足k-anonymity的泛化表)。
-\end{itemize}
-
-\subsection{Suppressing data}
-\paragraph{} 泛化的好处是可以在满足k-anonymity的条件下发布表中所有的数据条目，而suppression则通过移除某些条目来满足k-anonymity，同时减少泛化所需的步骤。
-
-\paragraph{带suppression的泛化表(generalized table with suppression)} 与泛化表相比，它不要求$|T_i| = |T_j|$，而是要求$|T_i| \geq |T_j|$，也就是说，泛化表的条目可以比原表少。
-
-\paragraph{最小要求抑制(minimal required suppression)} $T_j$是$T_i$的满足k-anonymity的泛化，满足下列条件时，我们称对$T_j$执行了最小要求抑制(也就是说，$T_j$是满足k-anonymity的抑制中条目最多的)：
-\begin{equation}
-	iff \enspace \forall T_z: T_i \preceq T_j, DV_{i,z} = DV_{i,j}, T_z \enspace satisfies \enspace k-anonymity \Rightarrow |T_j| \geq |T_z|.
-\end{equation}
-
-
-\paragraph{} 对任意一个表，若想要它满足k-anonymity，最简单的办法是移除QI重复次数少于k的数据条目。这样并不是好的做法，我们最希望得到的是一个执行了最小要求抑制的泛化结果，尽可能保留数据条目。泛化和抑制应当交叉使用，而问题是：以损失数据进度为代价的泛化和以损失数据完整性为代价的抑制，哪种更好。
-
-\paragraph{} 我们假设一个可接受的抑制值MaxSup，当被移除的数据条目少于它时，我们认为这是可接受的，也就是说，此时抑制比泛化更好。这是由于抑制只影响一条数据，而泛化影响整个数据表的某个属性。
-
-
-\paragraph{带suppresion 的k-minimal泛化}  两个表$T_i$、$T_j$，满足$T_i \preceq T_j$，若满足以下条件则称$T_j$是$T_i$的k-minimal泛化：
-\begin{itemize}
-	\item $T_j$ 满足执行最小要求抑制的k-anonymity。
-	\item $ |T_i| - |T_j| \leq MaxSup$.（不需要执行比要求的更多的抑制操作）
-	\item $\forall T_z: T_i \preceq T_z$ and satisfies conditions 1 and 2 $ \Rightarrow \neg (DV_{i,z} < DV_{i,j})$ （不存在满足以上条件，且比它DV更小的泛化）。
-\end{itemize}
-
-\subsection{Computing a k-minimal generalization}
-\paragraph{定理5.1} 表$T_i = PT[QI]$，DT是其值域元组，$T_i$的每一个k最小泛化都是$DGH_{DT}$中的泛化策略的局部最小泛化。
-\paragraph{} 由定理5.1可知，可以这样计算一个k最小泛化：遍历每一个泛化策略，沿着DT到DGH的最大值的方向出发，直到找到一个泛化结果，是的其满足k-anonymity和抑制阈值为止。给定$D_i$由DT到DGH的顶部的高度为$h_i$，DT在DGH中的不同策略的数量为$\frac{(h_i+...+h_n)!}{h_1!...h_n!}$。
-\paragraph{定理 5.2} 表$T_i = PT[QI]$，$T_j$、$T_z$是它的两个满足最小要求抑制的泛化，则有：$DV_{i,j} < DV_{i,z} \Rightarrow |T_j| \leq |T_z|$。直观来看，由于$T_z$更加“泛化”，它要满足抑制要求就只需要移除更少的条目。
-\paragraph{推理 5.1} 由定理5.1可知，$|T_j| \leq |T_z| \Rightarrow (|T_i| - |T_j|) \geq (|T_i| - |T_z|)$，则：$|T_i| - |T_j| \leq MaxSup \Rightarrow |T_i| - |T_z| \leq MaxSup$，反之，$|T_i| - |T_z| > MaxSup \Rightarrow |T_i| - |T_j| > MaxSup$。因此，如果一个具有$DV_{i,z}$的表$T_z$不能在抑制阈值MaxSup范围内提供k-anonymity，则所有具有$DV_{i,j}<DV_{i,z}$的表$T_j$也不能。
-\paragraph{DV的高度} 定义为在一个DV格VL中，从结点DV到格VL最小元素的距离。表示为$height(DV,VL)$。
-\paragraph{引理 5.1} 格$VL=<DV, \leq >$，$\forall DV_{i,j}, DV_{i,z} \in DV$，有：$DV_{i,j} < DV_{i,z} \Rightarrow height(DV_{i,j},VL) < height(DV_{i,j}, VL)$。
-
-\paragraph{} 通过以上引理，可以推理出实现k-anonymity的策略。设$\top$是VL的最大值，对每一个高度h，如果在高度h对应的DV不满足指定的泛化，那么任何小于高度h的DV都不满足指定的泛化。因此，我们可以通过二分搜索的方法找到满足指定泛化的最小高度h，并找到相应的DV。假设$h=height(\top,VL)$，我们首先评估高度$\left \lfloor \frac{h}{2} \right \rfloor$处的所有DV是否满足指定的泛化，如果满足，则记录下这些DV，然后在小于$\left \lfloor \frac{h}{2} \right \rfloor$高度处递归寻找是否有满足指定泛化的更小的DV。反之，则在大于$\left \lfloor \frac{h}{2} \right \rfloor$高度处寻找。此过程类似二分查找。
-\paragraph{} 此算法基于预定义的DGH，采用二分法查找DV。
-
-
-\section{Incognito: Efficient full-domain k-anonymity\cite{incognito}}
-\subsection{基本概念}
-\paragraph{频率集(frequency set)} 表T关于属性集Q的频率集是一个映射，从Q的一个值到此值在表T中的数量。在SQL中，类似于COUNT(*)子句。
-\paragraph{值泛化函数(value generalization function)} 定义为：$\gamma: D_i \rightarrow D_j$，是一个多对一的函数，用于表示值泛化关系，例如：$ \gamma(53712) = 5371*$。
-\paragraph{值泛化函数组合} 我们使用$\gamma^+$表示一个或多个值泛化函数的组合，它返回一个集合，包含多个泛化函数的值。例如，$537** \in \gamma^+(53712)$。
-\paragraph{全域泛化(full-domain generalization} \cite{samarati2001}所提的泛化只针对一个QI属性，而全域泛化指的是有一组QI属性$Q_1,...Q_n$和一组对应的值泛化函数$\phi_1,...\phi_n$，将表T的QI属性的值$q$替换为$a = \phi_i(q)$就可以得到其全域泛化V。
-\paragraph{文献\cite{samarati2001}的局限性} 文章定义了DV最小的泛化是最优泛化，有些时候这并不适用于某些应用，他们需要的是灵活性。例如，有的应用希望Sex字段不做任何泛化，而ZipCode则无所谓。而文章中的算法是无法满足这种灵活性的。文章中基于二分查找的算法不能保证找到最小的泛化，因此文本采用一个自底向上的宽度优先搜索算法，检查每一种可能的泛化，这样就可以找到最小的泛化，或找到格上的所有泛化。
-
-\subsection{Incognito}
-\paragraph{} 全域泛化通过连接表T和它的维度表，再对域属性进行恰当的投影来产生。例如，表$T=<A,...>$和属性A的维度表$<A_0,A_1,...>$，泛化表$T_1=<A_1,...>$可通过连接和投影操作来得到。
-\paragraph{}关于泛化维度，有几个关键的性质：
-	\subparagraph{泛化性质(generalization property)} 有表T，P、Q是表T的属性集，且$D_P <_D D_Q$。如果表T满足关于P的k-匿名，则也满足关于Q的k-匿名。
-	\subparagraph{汇总性质(rollup property)} 有表T，P、Q是表T的属性集，且$D_P <_D D_Q$。如果已知关于P的频率集$f_1$，则由$f_1$和$\gamma$可生成关于Q的频率集$f_2$。
-	\subparagraph{子集性质(subset property)} 有表T，P、Q是T的属性集，且$P \subseteq Q$。如果T满足关于Q的k-匿名，则T也满足关于P的k-匿名。（此性质有个推论：如果T不满足关于P的k-匿名，则T也不满足关于Q的k-匿名）
-	
-\subsubsection{基本Incognito算法}
-\paragraph{} 此算法从包含单个属性的QI集合的子集开始，逐个检查是否满足k-anonymity，并不断迭代增大子集。迭代过程如下：
-\begin{itemize}
-	\item 从$i=1$开始，考虑包含i个属性的QI集的子集，以及由这些子集出发的DGH。定义$C_i$为由包含i个属性的子集出发所构成的这些DGH中顶点的集合，$E_i$为边的集合。使用一个宽度优先搜索对$C_i$中的元素进行检查，并将生产的结果保存在$S_i$中。
-	\item 得到$S_i$之后，迭代进行第$i+1$次计算，直到$i>n$为止。
-\end{itemize}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{../images/incognito.png}
-	\caption{基本Incognito算法}
-	\label{incognito}
-\end{figure}
-\paragraph{}算法过程见图 \ref{incognito} 所示。以图所示数据为例，计算关于$\left \{Birthdate, Sex, Zipcode \right \}$的2-匿名泛化过程如下：
-\begin{enumerate}
-	\item i=1时
-	\begin{enumerate}
-		\item 包含1个属性的QI集的子集是：$\left \{ <B>,<S>,<Z> \right \}$（为描述方便，以下省略“<>”）
-		\item DGH：$B_0 \rightarrow B_1 \rightarrow B_2 \rightarrow B_3$($B_0$表示原始日期，$B_1$表示只使用“年月”表示的日期，$B_2$表示只使用“年”表示的日期，以此类推)、$S_0 \rightarrow S_1$、$Z_0 \rightarrow Z_1 \rightarrow Z_2 \rightarrow Z_3$。
-		\item 计算$C_1$: $ \left \{ B_0,...B_3,S_0,S_1,Z_0,...Z_3 \right \}$。
-		\item 以广度优先搜索方法检查泛化是否满足2匿名：
-		\begin{enumerate}
-			\item 搜索开始前：令结果集$S_1 = \Phi$（此处与文中算法相反，但原理一致）,将所有DGH的根节点加入到搜索队列中：$queue=\left \{ B_0, S_0, Z_0 \right \}$，下面开始迭代：
-			\item 取队列中第一个节点$node=B_0$得到：根据Count计算频率集 $\Rightarrow$ $B_0$不满足2匿名 $\Rightarrow$ 将$B_0$的直接泛化$B_1$加入到队列中：$queue=\left \{ S_0, Z_0, B_1 \right \}$
-			\item 取队列中下一个节点$node=S_0$得到：根据Count计算频率集 $\Rightarrow$ $S_0$满足2匿名 $\Rightarrow$ 将$S_0$的所有直接泛化加入到结果集$S_1$中得到：$S_1=\left \{ S_0, S_1 \right \}$。
-			\item 取队列中下一个节点$node=Z_0$得到：根据Count计算频率集 $\Rightarrow$ $Z_0$满足2匿名 $\Rightarrow$ 将$Z_0$的所有直接泛化加入到结果集$S_1$中得到：$S_1=\left \{ S_0, S_1, Z_0, Z_1, Z_2, Z_3 \right \}$。
-			\item 取队列中下一个节点$node=B_1$得到：根据父节点和$\gamma$函数计算频率集 $\Rightarrow$ $B_1$满足2匿名 $\Rightarrow$ $B_1$的所有直接泛化加入到结果集$S_1$中得到：$S_1=\left \{ S_0, S_1, Z_0, Z_1, Z_2, Z_3, B_1,B_2,B_3 \right \}$。
-		\end{enumerate}
-	\end{enumerate}
-	\item i=2时
-	\begin{enumerate}
-		\item 包含2个属性的QI集的子集是：$\left \{ <B,S>,<S,Z>,<B,Z> \right \}$
-		\item 计算$C_2$，$C_i$是$S_{1-1}$的超集，可由$S_{1-1}$扩展而来，另外，$C_i$中的元素应当按DGH的height排序。
-		\item 以下的步骤与$i=1$时类似。
-	\end{enumerate}
-	\item $i=3$的步骤与前面一致。
-	\item 此算法的最终结果$S_3$是最终泛化结果的泛化过程。
-\end{enumerate}
-
-\subsubsection{完备性}
-\paragraph{} 对于k-匿名全域泛化来讲，基本Incognito算法是完备的。
-
-\subsection{k-匿名模型的分类}
-\subsubsection{全局重编码模型(global recoding models)}
-
-\paragraph{基于结构的单维重编码(hierarchy-based single-demension recoding)} 单维重编码模型为每一个QI集的属性$Q_i$定义一个泛化函数$\phi_i$。不同的单维重编码模型的区别在于泛化函数的不同。
-
-\paragraph{基于分区的单维重编码(Partition-based single-dimension recoding)} 在单维有有序分区模式下，我们假设每一个属性的值域$D_{Q_i}$都能表示为一个全序集，$\phi_i$将属性值映射到这个全序集。
-
-\paragraph{基于结构的多维重编码(hierarchy-based multi-dimension recoding)} 多维重编码模型定义一个单一的函数$\phi: <D_{Q_1} \times ... \times D_{Q_n} \rightarrow D'$，用来重编码QI。
-
-\paragraph{基于分区的多维重编码} 同样，这也是单维模型的扩展。
-
-
-\subsubsection{局部重编码模型(local recoding models)}
-
-\section{Transforming data to satisfy privacy constraints\cite{iyengar2002} }
-\subsection{Usage Based Metrics}
-\paragraph{} 我们考虑构造一个分类模型，表格的其中一个列用于存储分类标签。用$G(r)$表示行$r$所属的等价类。由于泛化的原因，一个等价类内的行有可能分属于不同的分类类别。因此，我们可以通过惩罚包含不同分类类别的等价类来度量数据质量。
-\paragraph{分类度量} 定义为对每一个行的惩罚均值：
-\begin{equation}
-	CM = \frac{\sum_{\mbox{all rows}}penalty(r)}{N}
-\end{equation}
-\begin{equation}
-	penalty(r) = 
-		\left\{\begin{matrix}
-				1 & \mbox{if r is suppressed} \\ 
-				1 & \mbox{if} class(r) \neq magority(G(r)) \\ 
-				0 & otherwise
-		\end{matrix}\right.
-\end{equation}
-如果行$r$被隐匿或它的分类类别$class(r)$其所在等价类的主分类类别(占多数的分类类别)，则其惩罚为1，否则为0。如图 \ref{cm-example} 所示，行$(X=9,Y=9)$的惩罚为1，因为它的分类类别不是所在等价类的主分类类别。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.8\textwidth]{../images/cm-example.png}
-	\caption{DGH的格表示}
-	\label{cm-example}
-\end{figure}
-
-\section{Data privacy through optimal k-anonymization\cite{bayardo2005} }
-\subsection{Introduction}
-\paragraph{} 本文提出一种发现给定数据集的最优化k-匿名的实用方法。此方法与传统方法的不同之处在于：
-\begin{enumerate}
-	\item 一般方法通常对给定数据集系统地或使用贪心方法进行泛化，直到满足k-匿名。而本文的算法则是首先给定一个完全泛化的数据集（所有数据条目都一样），然逐渐具体化数据，直到满足最小k-匿名。
-	\item 本文基于树搜索策略进行基于成本的剪枝和动态搜索安排(dynamic search rearrangement)。
-	\item 提出一种新颖的数据管理策略，以减少评估匿名状态(anoymization)成本。
-\end{enumerate}
-\subsubsection{基础}
-\paragraph{属性的值域} 数据元组中，第i个属性的值域表示为$\Sigma_i$。
-\paragraph{属性泛化(attribute generalization)} 对一个值域为$\Sigma$的有序属性来说，其属性泛化是将其值域划分为$<I_1,...I_m>$，这种划分使得属性的每个值都出现在某个划分中，并且$I_i$中的每个值都出现在其前一个划分$I_j$的每个值之前，也就是说，划分互不交叠。例如，对于属性age，其值域是[1,30]的整数，其属性泛化可以表示为$<[1,10],[11,20],[21,30]>$。为方便，我们通常使用每个区间的最小值表示这个区间，上述例子就可以表示为：$ \left \{ 1,11,21 \right \}$。
-\paragraph{属性泛化的应用} 属性泛化a可以应用于属性值v上，表示为$a(v)$，其返回的是值v所属的区间。例如，对于属性age，a(2)返回的是[1,10]。数据集D的匿名化可以由D中各个属性的一组属性泛化$\left \{ a_1, ..., a_m \right \}$组成，可看作是对D转换为另一个数据集：$D' = \left \{ <a(v_{1,1}),...,a(v_{1,m})>,...,<a(v_{n,1}),...,a(v_{n,m})> \right \}$，$v_{i,j}$表示第i条数据的第j个属性值。
-\paragraph{度量方法} 每一种匿名化方法都需要有一个成本度量方法。成本度量一般是对泛化或隐匿操作进行统计信息损失。有两种主要度量方法：
-	\subparagraph{分辨度量(discernibility metric)} 它针对每一条数据的辨别度进行其进行惩罚。对结果表中的每一个等价类，若它的大小为$j$，则其中每一条数据的惩罚也为$j$，若一条数据被隐匿，则其惩罚为$|D|$。即：
-	\begin{equation}
-		C_{DM}(g,k)= \sum_{\forall E \enspace s.t. \enspace |E|\geq k} |E|^2 + \sum_{\forall E \enspace s.t.\enspace |E| < k} |D||E|
-	\end{equation}
-	\subparagraph{分类度量(classification metric)} 它根据等价类中每条数据的分类标签进行惩罚，具体见\cite{iyengar2002}：
-	\begin{equation}
-		C_{CM}(g,k)=\sum_{\forall E \enspace s.t. \enspace |E|\geq k} (|minority(E)|) + \sum_{\forall E \enspace s.t.\enspace |E| < k} |E|
-	\end{equation}
-
-\subsection{匿名化的集合表示}
-\paragraph{} 参照属性泛化，我们可以在所有属性上强加一个全排序(total order），使得当$i > i$时，任何一个$\Sigma_i$中的值都在$\Sigma_j$中的值之前。如图\ref{total-order-attributes} 所示。根据属性泛化的表示方法，由于每个值域中的最小值都必须出现泛化器(generalizer)中，因此这些值可以被省略。如图\ref{total-order-attributes} 中标注“*”的那些。
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1\textwidth]{../images/total-order-attributes.png}
-	\caption{所有属性的全序表示}
-	\label{total-order-attributes}
-\end{figure}
-\paragraph{匿名化集合表示} 我们用$v_{l_i}$表示第i个属性的最小值，我们可以这样表示匿名化：
-\begin{equation}
-	\Sigma_{all} = (\Sigma_1 \setminus v_{l_1})\cup ... \cup (\Sigma_m \setminus v_{l_m})
-\end{equation}
-特别地，空集合$\left \{ \right \}$表示最一般(most general)匿名化，它只包含一个等价类；$\Sigma_{all}$表示最具体(most specific)匿名化
-	\subparagraph{示例} 如图\ref{total-order-attributes} ，考虑匿名化$\left \{ 2,7,9 \right \}$，加上蕴含的（被省略的）最小值就是：$\left \{ 1,2,4,6,7,9 \right \}$，也就是说，将三个属性分别划分为：Age:<[10-29],[30-49]>
-\subsection{A Systematic Search Strategy}
-\paragraph{} 我们将确定最优化k匿名的问题界定为一个以最小代价在匿名化集合$\Sigma_{all}$中进行搜索的问题。集合枚举(set-enumeration)搜索策略是从给定的集合中以树形结构系统地枚举所有子集的最直接的一种方法。
-	\subparagraph{头集(head set)} 在集合枚举树中，任何节点都能够被所枚举的集合节点表示，这些节点成为头集。
-	\subparagraph{尾集(tail set)} 能够被加入到头集中的值的集合成为尾集。
-	\subparagraph{全集(allset)} 由头集和尾集组成的集合成为全集。
-\paragraph{} 由于集合枚举是系统和完全的，通过此算法我们可以保证得到最佳的匿名化。不幸的是，匿名化集合的大小是$2^{|\Sigma|}$。
-
-\subsubsection{Pruning Overview}
-\paragraph{} 要减小搜索空间，最好的办法是剪枝。搜索树首先尝试减掉节点，如果不行则尝试减掉节点的尾集元素。是否剪枝则通过计算成本下界(lower-bound)来决定。(如果成本下界比目前最优成本还高，则可以剪去)
-\subsubsection{Computing Cost Lower-Bounds}
-\paragraph{隐匿产生的penalty} 如果匿名方案H隐匿了元组集S，则H的任何后代节点所隐匿的元组集一定保护S：
-	\subparagraph{观察5.1} 在搜索树中，节点H隐匿元素是H的后代节点所隐匿节点的子集。
-对分辨度量来讲，H的后代的隐匿操作的惩罚就是$|D| \cdot |S|$；对分类度量，其惩罚是$|S|$。
-
-\paragraph{泛化产生的penalty} 泛化方案的后代更加具体，产生的等价类更多：
-	\subparagraph{观察5.2} 如果一个节点H，其上的全集是A，则由A产生的等价类是由H的后代产生的等价类的子集。
-
-\paragraph{定义分辨度量} 定义$E_{A,t}$是含有元素t且被全集A泛化的等价类。容易看出，E中的元组t最小的惩罚应当时$|E|$，当$|E| < k$时，其惩罚可取$k$。因此，分辨度量定义为：
-\begin{equation}
-	LB_{DM}(H,A) = \sum_{\forall t \in D} \left\{\begin{matrix}
-						|D| & \mbox{when t is suppressed by H,}
-						\\ 
-						\max(|E_{A,t}|, k) & otherwise
-						\end{matrix}\right.
-\end{equation}
-
-\paragraph{定义分类度量} 定义为：
-\begin{equation}
-	LB_{CM}(H,A) = \sum_{\forall E \mbox{induced by A} } \left\{\begin{matrix}
-						|D| & \mbox{when E is suppressed by H,}
-						\\ 
-						|minority(E)| & otherwise
-						\end{matrix}\right.
-\end{equation}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{Mondrian Multidimensional K-Anonymity\cite{mondrian} }
-\subsection{Introduction}
-\paragraph{本文贡献} 本文的贡献主要是一种新的多维重编码模型和一种贪心划分算法，其优点是：
-	\begin{itemize}
-		\item 更有效率，其时间复杂度为$O(nlogn)$;
-		\item 产生的结果质量更高。
-	\end{itemize}
-\paragraph{一般目的质量度量} 最简单一种质量度量方法是基于等价类的数量。
-
-\subsection{Multidimensional Global Recoding}
-\paragraph{全局重编码} 通过对QI属性的值域进行泛化来实现匿名化，它可进一步分为两类：单维全局重编码和多维全局重编码。多维全局重编码可同时用于离散数据(categorical data)和连续数据(numeric data)，而单维划分模型则用于连续数据。
-\paragraph{划分模型} 单维划分将一个属性的值域划分为一个互不重叠的集合。单维划分可扩展至多维划分，其定义为一堆d维元组$(p_1,...p_d),(v_1,...,v_d) \in D_{X_1} \times ... \times D_{X_d}$存在$ \forall i, p_i \leq v_i$。
-\subsection{Multidimensional Local Recoding}
-
-\subsection{A Greedy Partitioning Algorithm}
-
-\subsection{Workload-Driven Quality Measurement}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{l-Diversity: Privacy Beyond k-Anonymity\cite{l-diversity} }
-
-\subsection{Introduction}
-\subsubsection{k-anonymity面临的两种形式的攻击}
-\paragraph{} k-anonymity面临两种形式的攻击：
-	\subparagraph{同质化攻击（Homogeneity attack）} 如同前面所提的的“互补发布攻击”、“时间攻击”，由于数据发布时，并不是所有字段都是QI，而同一组QI的值相同的数据中，会出现敏感字段都相同的情况，而且这种情况并不罕见。在这种情况下，如果数据集仅执行k-anonymity，则会由于敏感字段缺乏多样性而使得攻击者可以重新识别数据集个体，从而造成信息纰漏。同质化攻击问题的一种解决方案就是本文所讲的l-diversity模型。
-	\subparagraph{背景知识攻击(Background knowledge attack)} 就算数据由于多样性的存在而不会受到同质攻击，但也有可能会由于背景知识（例如，可以从日常生活看出某人肯定不会患有某种特定疾病）的存在而是多样性容易排除，从而使得敏感信息泄露。
-	
-\subsection{定义}
-\paragraph{数据泛化（Data generalization）} 将一个数据集进行分组，各个分组之间互不重叠。其形式化定义为：域$D^*=\left \{P_1,P_2,...\right \}$是域D的泛化，如果$\cup P_i = D$ and $P_i \cap P_j = \O, i \neq j $。$\phi_{D^*}(x)$表示$D^*$包含x的元素P。
-
-\paragraph{攻击者（Adversary）的背景知识} 攻击者可能知道以下几类背景知识：
-	\subparagraph{} 攻击者可能知道已发布的表T的泛化$T^*$，也就是说，知道T的属性的值域。
-	\subparagraph{} 攻击者可能知道某些个体存在于表中。
-	\subparagraph{统计（demographic）背景知识} 攻击者可以知道表中字段的值的分布。
-
-\subsection{贝叶斯优化隐私模型（Bayes-Optimal Privacy, BOP）}
-\paragraph{两个假设} 为简化模型，给出两个假设：
-\begin{itemize}
-	\item 数据表T是全集的一个随机样本集；
-	\item 个体只有一个敏感字段。
-\end{itemize}
-另外，还假设一个比较糟糕的情况：攻击者知道准标识符Q和敏感字段S的联合分布。
-\paragraph{度量} 我们用两个指标对隐私纰漏进行度量：
-	\subparagraph{先验置信（prior belief）} 已知目标个体t的准标识符的值q的情况下，其敏感字段值为s的概率：
-	\begin{equation}
-		\alpha_{(q,s)} = P_f(t[S]=s|t[Q]=q)
-	\end{equation}
-
-	\subparagraph{后验置信（posterior belief）} 已知目标个体t的准标识符的值q，以及其泛化$t^*$的情况下，其敏感字段值为s的概率：
-	\begin{equation}
-		\beta_{(q,s,T^*)}=P_f(t[S]=s|t[Q]=q \wedge \exists t^* \in T^*, t \overset{*}{\rightarrow}t^* )
-	\end{equation}
-\paragraph{定理3.1} 令$n_{q^*,s'}$是表中出现$(q^*, s')$对的个数。
-
-\paragraph{定理3.1的证明}
-
-\subsubsection{隐私原则}
-\paragraph{数据表发布后可能泄露隐私的两种方式}
-	\subparagraph{正纰漏(Positive Disclosure)} 如果发布数据表后，可以提升攻击者正确识别目标的概率，例如，对于一个q，其对应的s的值都是同一个（同质化攻击），那就是正纰漏。 
-	\subparagraph{负纰漏(Negative Disclosure)} 如果发布数据表后，攻击者可以从中排除一些关于目标的错误的敏感值，例如，根据背景知识可以排除特定个体的一些敏感值，那就是负纰漏。
-\paragraph{不提供信息原则(Uninformative Principl)} 隐私的理想定义应该满足不提供信息原则，即：表的发布并不能为攻击者带来除了背景信息以外的其他信息。此原则有很多实例化的方式，他们都属于贝叶斯优化隐私定义。其中一个是：
-	\subparagraph{$(\rho_1, \rho_2)-Private$} 给定表$T^*$和两个常数$\rho_1,\rho_2$。如果$\alpha_{(q,s)} < \rho_1 \wedge \beta_{(q,s,T^*)} > \rho_2$，或者$\alpha_{(q,s)} < 1 - \rho_1 \wedge \beta_{(q,s,T^*)} > 1 - \rho_2$，我们就说发生了“$(\rho_1, \rho_2)$-privacy breach”。如果$(\rho_1, \rho_2)$-privacy breach没有发生，我们就说表$T^*$满足$(\rho_1, \rho_2)-Private$。
-
-\subsubsection{BOP的局限}
-	
-\paragraph{} BOP存在着一些缺陷，使其无法在实践中使用。包括：
-	\subparagraph{不充分知识} 数据发布者不可能完全知道数据的分布。
-	\subparagraph{对攻击者的无知} 数据发布者不知道攻击者到底知道什么。
-	\subparagraph{实例知识} 理论定义不能定义那些无法被概率模型建模的知识。例如，Bob的儿子可能会告诉Alice，Bob没有糖尿病。
-	\subparagraph{多攻击者} 可能会有多个不同知识水平的攻击者存在，他们具有的背景知识都不同，数据发布者都必须考虑到。
-	
-\subsection{l-diversity: 一种实用的隐私定义}
-\paragraph{} l-diversity可以克服上述的BOP实践中存在的问题。
-
-\subsubsection{l-diversity 原则}
-\paragraph{等价类($q^*-block$)} 表$T^*$中的一组数据，他们的非敏感值都被泛化为$q^*$。
-\paragraph{l-diversity原则} 如果有一个$q^*-block$，它的隐私属性S包含至少$l$个良表示(well-represented)值，我们就说这个$q^*-block$是$l-diverse$的，如果表中所有的$q^*-block$都是$l-diverse$的，那么这个表就是$l-diverse$的。
-\paragraph{} 此原则主张确保每一个$q^*-block$的敏感字段具有至少l个良表示值，但并没有说明良表示意味着什么。最简单的，我们可以将“l个良表示值”理解为“l个不同的值”。另外，定义不同的良表示值也可以得到不同的实例。
-\subsubsection{l-diversity的实例}
-\paragraph{} 根据不同的良表示定义，可以得到不同的l-diversity定义。包括：可区分l-diversity、熵l-diversity、递归l-diversity等。
-
-\paragraph{Distinct(可区分) l-diversity} 要求每个等价类中至少有l个可区分的值。它存在一个缺陷：如果某一个取值的频率明显高于其他取值，这将使得观察者可以以较高的置信度认为这一等价类中的敏感属性都取这个值。
-
-\paragraph{Entropy l-diversity} 设$p_(q^*,s)$为等价类中敏感值为s的概率，那么表满足l-diversity的条件是，每一个等价类都满足：
-\begin{equation}
-	- \Sigma_{s \in S} p_(q^*,s) \log(p_(q^*,s)) \geq \log(l)
-\end{equation}
-这要求整个表的熵至少是$\log(l)$，也就是要求至少有l个可区分的值。这并不容易实现，特别是当某个敏感值非常常见的时候。
-
-\paragraph{Recursive(c,l)-diversity} 递归l-diversity。 
-
-\subsubsection{多敏感属性的情形}
-\paragraph{} 以上讨论都基于一个基本的假设：每条数据只有一个敏感字段。
-\paragraph{Multi-Attribute l-diversity} 若把$S_i$之外的所有S都当做Q还满足l-diversity，那么表T就满足l-diversity。
 
 \section{差分隐私保护及其应用\cite{熊平2014}}
 \subsection{引言}
@@ -636,9 +123,6 @@
 其中$f(D)$是查询结果，$M(f(D))$是对M的干扰结果。”
 \subsubsection{非交互式数据发布} “在非交互式环境下，数据管理者针对所有可能的查询，在满足差分隐私的条件下一次性发布所有查询的结果。或者，数据管理者发布一个原始数据集的“净化”版本，这是一个不精确的数据集，用户可对该版本的数据集自行进行所需的查询操作”。可表述为：“给定D和F，需寻求一个数据发布机制，使其能够在满足差分隐私保护的条件下一次性回答F中所有的查询”。
 
-\bibliographystyle{ieeepes}
-\bibliography{../Saliency}
-\end{document}
 
 \section{Privacy-preserving deep learning\cite{shokri2015ppdl}}
 \subsection{Introduction}
@@ -655,6 +139,77 @@
 	\item 不同的训练数据集作用于不同的参数；
 	\item 不同的特征对目标函数的作用并不相等。
 \end{itemize}
+\paragraph{} 在进行选择性SGD时，学习器选择一部分参数进行更新，可选择梯度较大的那部分参数。
+\subsection{系统架构}
+\paragraph{概述} 系统由一个管理全局参数的参数服务器和多个局部训练器（参与者）组成，他们之间通过参数选择协议交换参数。参数交换协议允许参与者独立地优化参数、避免过拟合。
+\paragraph{Local training} 每个参与者都可以在本地训练神经网络的参数。假设本地维护$w^{(i)}$个参数。训练过程如下：
+\begin{enumerate}
+	\item 将$\theta_d \times |w^{(i)}|$个参数下载并更新到本地，并不下载更新全部参数；
+	\item 运行一轮SGD；
+	\item 计算$\Delta w^{(i)}$，即新旧参数之间的差值；
+	\item 选择性地上传最多$\theta_u \times |w^{(i)}|$个参数到服务器。选择方法有：
+	\begin{itemize}
+		\item 最大值选择：选择最大的几个值进行上传；
+		\item 带阈值的随机选择：从大于阈值$\tau$的值中随机选择上传；
+	\end{itemize}
+\end{enumerate}
+另外，上传$\Delta w^{(i)}$的值之前，这些值将被截断在$[-\gamma, \gamma]$之间，以避免这些值泄露训练数据的太多信息。
+\paragraph{为什么DSSGD能行?} 这主要是因为学习过程的随机性。在训练过程中随机更新局部参数会增加局部SGD的随机性。而由异步参数更新导致的随机性对于精确地训练神经网络非常有效。
+\paragraph{Parameter exchange protocol} 交换协议有三种类型：
+\begin{itemize}
+	\item 轮询。每个参与者按固定顺序下载、训练并更新一部分参数，然后下一个参与者继续；
+	\item 随机。所有参与者同时随机下载、训练并更新一部分参数，但参数的读取过程是加锁的，也就是具有原则性（atomic）；
+	\item 异步。同随机一样，但并不加锁。
+\end{itemize}
+\subsection{Evaluation}
+\paragraph{数据集} 实验选用的数据集是MNIST和SVHN
+\paragraph{神经网络架构} 分别采用MLP和CNN
+\paragraph{实验设置} 
+\paragraph{选择性SGD的实验结果} SSGD的实验得到了以下结论：
+\begin{itemize}
+	\item SSGD可以获得与SGD相同的精度；
+	\item SGD和SSGD在总体上是类似的；
+	\item SSGD甚至能够取得比SGD更高的精度，这是因为SSGD类似于给SGD加上了Dropout。
+\end{itemize}
+\paragraph{DSSGD的实验结果} 结果表明：
+\begin{itemize}
+	\item 任何形式的协作都可以获得比独立学习更高的精度；
+	\item 参与者的数量比共享参数的比例对精度的影响更小。
+\end{itemize}
+\subsection{Privacy}
+\subsubsection{防止直接泄露}
+\paragraph{训练过程} 在此过程中，由于各自的数据都不共享，所以不存在泄露。
+\paragraph{模型使用过程} 此过程中也不需要使用到训练数据，因此也不存在泄露。
+
+\subsubsection{防止间接泄露}
+
+\section{Deep learning with differential privacy\cite{abadi2016deep} }
+\subsection{Introduction}
+\paragraph{} 深度学习模型不应该暴露数据集中的隐私信息，出于这个考虑，本文提出了一种学习算法，以较小的隐私预算训练非凸、规模巨大的深度网络。
+\subsection{Our Approach}
+\subsubsection{差分隐私SGD算法}
+\paragraph{} 保护SGD过程中的隐私，其实就是对梯度进行隐私保护。本文的方法是首先根据限界对梯度进行修剪，然后再加上噪声。算法如下。
+\paragraph{Norm clipping} 由于并没有关于梯度大小的先验界限，因此算法中使用$L_2$范数进行修剪。在算法中，如果$\left \| g \right \|_2 \leq C$，则g将被保护，如果$\left \| g \right \|_2 > C$ 则g将会被范数C缩放。
+\paragraph{Lots} 在训练时，一个数据集一般被分为不交叉的多个batch，而此处的lot则指的是每次从整个数据集中随机取L条数据，每条数据被取出的概率是$q=L/N$，类似于，batch是不放回抽样，lot是放回抽样。
+\paragraph{Privacy accounting} 差分隐私SGD需要计算总体隐私成本，可利用隐私的组合性质逐个进行计算，最后再求和。
+\paragraph{Moments accountant} 
+
+
+\section{The algorithmic foundations of differential privacy\cite{dwork2014algorithmic}}
+\subsection{Basic Terms}
+\subsubsection{Formalizing differential privacy}
+
+\paragraph{概率单纯形(Probability Simplex)} 离散集合B上的概率单纯形定义为：
+\begin{equation}
+	\Delta (B) = \left \{ x \in R^{|B|}: x_i \geq \mbox{0 for all i and } \sum_{i=1}^{|B|} x_i=1 \right \}
+\end{equation}
+它是一个向量集合，其元素是一个概率表，一个|B|维向量，此向量每个元素代表一个概率，所有元素之和为1。
+\paragraph{随机算法(Randomized Algorithm)} 定义域为A，值域为B的概率算法与一个映射$M:A \rightarrow \Delta (B)$相关联，对算法的输入$a \in A $，其输入为 $b \in B$，b的值是一个随机变量，满足分布$M(a)$。
+\paragraph{隐私损失(Privacy loss)} 观察$\xi$引起的隐私损失定义为：
+\begin{equation}
+	L^{(\xi)}_{M(x)||X(y)}=ln(\frac{Pr[M(x)=\xi]}{Pr[M(y)=\xi]} )
+\end{equation}
+此值若为正，则说明一个观察结果更可以由x引起，若为负，则说明结果更可能由y引起。($\epsilon, \xi$)-差分隐私可以确保，对于所有的邻接集合x,y，隐私损失的绝对值都至少以概率$1-\delta$被限制在$\epsilon$ 以内。
 
 
 
@@ -663,48 +218,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\bibliographystyle{ieeepes}
+\bibliography{../Saliency}
+\end{document}
