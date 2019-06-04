@@ -123,6 +123,29 @@
 其中$f(D)$是查询结果，$M(f(D))$是对M的干扰结果。”
 \subsubsection{非交互式数据发布} “在非交互式环境下，数据管理者针对所有可能的查询，在满足差分隐私的条件下一次性发布所有查询的结果。或者，数据管理者发布一个原始数据集的“净化”版本，这是一个不精确的数据集，用户可对该版本的数据集自行进行所需的查询操作”。可表述为：“给定D和F，需寻求一个数据发布机制，使其能够在满足差分隐私保护的条件下一次性回答F中所有的查询”。
 
+\section{本地化差分隐私研究综述\cite{2018本地化差分隐私研究综述}}
+\subsection{引言}
+\paragraph{} "传统的差分隐私技术将原始数据集中到一个数据中心,然后发布满足差分隐私的相关统计信息,我们称之为中心化差分隐私(Centralized Differential Privacy)技术.因此,中心化差分隐私对于敏感信息的保护始终基于 一个前提假设:可信的第三方数据收集者,在不可信第三方数据收集者的场景下,本地化差分隐私(Local Differential Privacy)技术应运而生"
+\paragraph{} "本地化差分隐私技术继承自中心化差分隐私技术,同时扩展出了新的特性,使该技术具备两大特点:1)充分 考虑任意攻击者的背景知识,并对隐私保护程度进行量化;2)本地化扰动数据,抵御来自不可信第三方数据收集 者的隐私攻击."
+\paragraph{} "对本地化差分隐私的研究和应用,主要考虑以 下两个方面问题:(1)如何设计满足 -本地化差分隐私的数据扰动算法,以保护其中的敏感信息;(2)数据收集者 如何对查询结果进行求精处理,以提高统计结果的可用性."
+\paragraph{研究方向} "本地化差分隐私技术的研究方向包括扰动机制的研究以及统计数据的发布.本地化差分隐私的扰动机制主要包括随机响应、信息压缩和扭曲两种."本地化差分隐私的统计数据发布包括：单值频数发布、多值频数发布和均值发布。
+\subsection{基于本地化差分隐私的数据保护框架}
+\paragraph{} "交互式和非交互式数据保护框架的最大区别在于输出结果之间的关联性.1)交互式框架适用于 最终输出结果与前 i 个输出有依赖关系的情形.2)非交互式框架适用于前后的输入输出之间无依赖关系的情形."
+\subsection{基于本地化差分隐私的单值频数统计}
+\paragraph{} "单值频数统计是指每个用户只发送一个变量取值的情形,用户将数据发送给数据收集者后,数据收集者根 据已有的或统计得到候选值列表,统计其中每一个候选值的频数并进行发布."
+\paragraph{RAPPOR方法} 变量以字符串表示，先将变量通过Bloom Filter表示成长度为h的向量，然后对向量进行一次随机扰动，得到PRR，再进行第二次随机扰动得到IRR，然后将扰动结果发送给数据收集者。"RAPPOR 方法的主要存在两个方面的缺陷:1)用户和数据收集者之间的传输代价比较高,即每个用户需要传输长度为 h 的向量给数据收集者;2)数据收集者需预先采集候选字符串列表,以进行频数统计."
+\subsection{未来研究挑战} 
+\paragraph{} "现有研究主要集中在两个方面:1)理论上,设计满足本地化差 分隐私的保护机制;2)方法上,对频数和均值两种统计结果进行保护."
+\paragraph{复杂数据类型的本地化差分隐私保护} "目前,本地化差分隐私保护技术的研究主要还是针对简单的数据类型,然而,简单的数据类型对于当下空前的数据分析需求而言,还远远不够.以键值对数据(Key-value database)和图数据(Graph database)为例"
+\paragraph{不同查询和分析任务的本地化差分隐私保护} "聚类分析是为了把性质相近的数据归入一类,典型应用如 客户群体发现、社区发现等;频繁模式挖掘的目的则是找出数据集中的频繁项集,进而发现模式规律,典型应用 如搜索日志分析、购买行为分析等.聚类分析和频繁模式挖掘都是数据分析中的常用方法,其中涉及的查询包 括计数查询、均值查询、范围查询和最值查询等.本地化差分隐私下,不仅要求能够支持不同的查询类型,还要 求扰动后的数据能够同时支持多种不同的查询.与中心化差分隐私不同,本地化差分隐私通过抵消添加在数据 中的正向和负向噪声来得到比较准确的统计结果,但就单条数据记录而言,通常扰动前后数据的偏差较大,这也 进一步加大了针对不同查询的难度."
+\paragraph{基于本地化差分隐私的高维数据发布} "本地化差分隐私下的高维数据发布主要考虑三个方面的问题:1)如何在一定隐私预算 内衡量属性之间的关联性,从而进行降维处理;2)如何设计推理模型,最小化边缘分布到联合分布的近似误差,提 高数据可用性;3)如何控制高维数据在用户和数据收集者之间的通信代价."
+
+
+
+
+
+
+
 
 \section{Privacy-preserving deep learning\cite{shokri2015ppdl}}
 \subsection{Introduction}
@@ -189,6 +212,13 @@
 \subsection{Our Approach}
 \subsubsection{差分隐私SGD算法}
 \paragraph{} 保护SGD过程中的隐私，其实就是对梯度进行隐私保护。本文的方法是首先根据限界对梯度进行修剪，然后再加上噪声。算法如下。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../images/dpsgd.png}
+	\caption{Differentially private SGD}
+	\label{}
+\end{figure}
+
 \paragraph{Norm clipping} 由于并没有关于梯度大小的先验界限，因此算法中使用$L_2$范数进行修剪。在算法中，如果$\left \| g \right \|_2 \leq C$，则g将被保护，如果$\left \| g \right \|_2 > C$ 则g将会被范数C缩放。
 \paragraph{Lots} 在训练时，一个数据集一般被分为不交叉的多个batch，而此处的lot则指的是每次从整个数据集中随机取L条数据，每条数据被取出的概率是$q=L/N$，类似于，batch是不放回抽样，lot是放回抽样。
 \paragraph{Privacy accounting} 差分隐私SGD需要计算总体隐私成本，可利用隐私的组合性质逐个进行计算，最后再求和。
@@ -205,11 +235,213 @@
 \end{equation}
 它是一个向量集合，其元素是一个概率表，一个|B|维向量，此向量每个元素代表一个概率，所有元素之和为1。
 \paragraph{随机算法(Randomized Algorithm)} 定义域为A，值域为B的概率算法与一个映射$M:A \rightarrow \Delta (B)$相关联，对算法的输入$a \in A $，其输入为 $b \in B$，b的值是一个随机变量，满足分布$M(a)$。
+\paragraph{数据库距离} 假设数据库中的记录都来自于集合$\chi$，$x_i$的值为自然数，表示集合$\chi$中的第i个元素出现在数据库x中的次数。这样就可以用$x\in \mathbb{N}^{|\chi |}$来表示数据库。 两个数据库之间的距离定义为为其$l_1$范数，即：$\left \| x-y \right \|_1$。
 \paragraph{隐私损失(Privacy loss)} 观察$\xi$引起的隐私损失定义为：
 \begin{equation}
 	L^{(\xi)}_{M(x)||X(y)}=ln(\frac{Pr[M(x)=\xi]}{Pr[M(y)=\xi]} )
 \end{equation}
-此值若为正，则说明一个观察结果更可以由x引起，若为负，则说明结果更可能由y引起。($\epsilon, \xi$)-差分隐私可以确保，对于所有的邻接集合x,y，隐私损失的绝对值都至少以概率$1-\delta$被限制在$\epsilon$ 以内。
+此值若为正，则说明一个观察结果更可以由x引起，若为负，则说明结果更可能由y引起。($\epsilon, \delta$)-差分隐私可以确保，对于所有的邻接集合x,y，隐私损失的绝对值都至少以概率$1-\delta$被限制在$\epsilon$ 以内。
+\paragraph{后处理(Post-processing)} 差分隐私对后处理是免疫的，也就是说，如果一个算法保护了隐私，那对这个算法的结果做任何处理都不会增加隐私损失。
+\subsection{Basic Techniques and Composition Theorems}
+\subsubsection{The laplace mechanism}
+\paragraph{$l_1$-敏感度} 函数f的$l_1$-敏感度是：
+\begin{equation}
+	\Delta f = \max_{x, \in \mathbb{N}^{|\chi|} \atop \left \| x-y \right \|_1=1} \left \| f(x)-f(y) \right \|_1
+\end{equation}
+$l_1$-敏感度是决定响应查询有多精确的一个重要参数。$l_1$-敏感度给出了一个上界：为了保护隐私我们必须在多大程度上干扰输出。为了达到这个目的，我们很自然想到用一个噪声随机变量来实现差分隐私。
+\paragraph{Laplace分布} 以0为中心，尺度为b的Laplace分布的概率密度函数定义为：
+\begin{equation}
+	Lap(x|b)=\frac{1}{2b	}\exp(-\frac{|x|}{b}).
+\end{equation}
+
+\paragraph{Laplace机制} 对于函数$f:\mathbb{N}^{|\chi|} \rightarrow \mathbb{R}^k$，$M_L$是满足$\epsilon$-差分隐私的输出结果，$Y_i$是独立同分布的随机变量，且$Y_i \sim Lap(\Delta f / \epsilon$，有：
+\begin{equation}
+	M_L(x, f(\cdot), \epsilon )=f(x) + (Y_1, ... , Y_k)
+\end{equation}
+Laplace机制捕获f的输出，并简单地加上尺度为$\Delta f / \epsilon$的Laplace随机变量进行干扰，使得输出满足$\epsilon$-差分隐私。
+\paragraph{示例3.1 计数查询} 计数查询被描述为：数据集中满足条件P的元素有多少个。其敏感度为$\Delta f = 1$，因此可以通过添加满足$Lap(1/\epsilon)$的噪声使其满足$\epsilon$-差分隐私。如果是由任意但固定的m个计数查询组成的联合查询，可表示为$f_m:\mathbb{N}^{|\chi|} \rightarrow \mathbb{R}^m$，由于改变一条数据就有可能改变所有的输出，因此其敏感度为$\Delta f_m = m$，因此可以通过添加满足$Lap(m/\epsilon)$的噪声使其满足$\epsilon$-差分隐私。
+\paragraph{示例3.2 直方图查询} 直方图查询描述的是：如果将数据集中的所有元素进行不交叉分类，每个类别中各有多少元素。其敏感度为$\Delta f = 1$。
+\paragraph{定理 3.8} 令 $f_m:\mathbb{N}^{|\chi|} \rightarrow \mathbb{R}^k$，$y=M_L(x, f(\cdot), \epsilon )$，则：
+\begin{equation}
+	Pr[\left \| f(x)-y \right \|_\infty \geq \ln(\frac{k}{\delta})\cdot (\frac{\Delta f}{\epsilon})] \leq \delta
+\end{equation}
+$\left \| f(x)-y \right \|_\infty$ 表示任意大小的数据集，因加入干扰导致错误的数据条数。此定理可用于计算在满足指定差分隐私的情况下，在一个置信区间内出现错误的数据条数的上界。
+\paragraph{示例 3.3 姓氏统计} 假设我们要统计一个数据集中所有人的姓氏分别是多少个，候选姓氏总数一共有10000个，可以表示为：$f:\mathbb{N}^{|\chi|} \rightarrow \mathbb{R}^10000$。这是一个直方图查询，因此$\Delta f=1$。假设我们希望查询满足(1,0)-差分隐私，置信度为95\%，由于$\ln(10000/0.05) \approx 12$，则有：$Pr[\left \| f(x)-y \right \|_\infty \geq 12] \leq 0.05$，也就是说，在满足(1,0)-差分隐私，置信度为95\%的情况下，数据因干扰出错的数量上界为12条。由于定理本身对数据集大小没有规定，因此如果我们使用的是一个数量为3亿的国家人口数据集，这将是一个非常低的错误率。
+\paragraph{Report Noisy Max} 考虑查找m元计数查询的最大值的问题：m元计数查询中每一个计数结果都加上噪声$Lap(1/\epsilon)$，返回其中最大的那个值。此算法满足($\epsilon$,0)-差分隐私。
+\subsubsection{指数机制}
+\paragraph{指数机制} 用于这样的场合：需要返回一个最大值，但不能给值直接加上noise，因为这会导致返回错误的值(非最大值加上噪声后可能会变成最大值)。例如，返回拍卖中的最佳出价，但要求不泄露最终价格。指数机制基于效用函数$u: \mathbb{N}^{|\chi|} \times R \rightarrow \mathbb{R}$来定义,R是离散的输出结果。
+\subsubsection{组合定理}
+\paragraph{定理 3.14} 有$M_1: \mathbb{N}^{|\chi|} \rightarrow R_1$，$M_2: \mathbb{N}^{|\chi|} \rightarrow R_2$分别满足$\epsilon_1, \epsilon_2$-差分隐私，则他们的组合$M_{1,2}(x)=(M_1(x),M_2(x))$满足$\epsilon_1+\epsilon_2$-差分隐私。
+\paragraph{支撑集} 随机变量X的支撑集表示为Supp(X)，一个概率的支撑集就是所有概率密度非零部分的集合。
+\paragraph{KL-散度} 定义为：
+\begin{equation}
+	D(Y \parallel Z) = \mathbb{E}_{y\sim Y}\begin{bmatrix} \ln \frac{Pr[Y = y]}{Pr[Z = y]} \end{bmatrix}
+\end{equation}
+表示两个随机变量之间的“距离”，但是它不是对称的，也不满足三角不等式，当Supp(Z)不包含Supp(Y)的时候甚至有可能是无穷大。
+\paragraph{Max 散度} 定义为：
+\begin{equation}
+	D_{\infty}(Y \parallel Z) = \max_{S\subseteq Supp(Y)} \begin{bmatrix} \ln \frac{Pr[Y \in S]}{Pr[Z \in S]} \end{bmatrix}
+\end{equation}
+\paragraph{$\delta$-近似Max散度} 定义为：
+\begin{equation}
+	D_{\infty}^{\delta}(Y \parallel Z) = \max_{S\subseteq Supp(Y):Pr[Y \in S]\geq \delta} \begin{bmatrix} \ln \frac{Pr[Y \in S] - \delta}{Pr[Z \in S]} \end{bmatrix}
+\end{equation}
+\paragraph{备注 3.1} 机制M是$\epsilon$-差分隐私的，当且仅当，对两个邻接数据集x,y有：
+\begin{enumerate}
+	\item $D_{\infty}(M(x) \parallel M(y)) \leq \epsilon$ and $D_{\infty}(M(y) \parallel M(x)) \leq \epsilon$
+	\item $D_{\infty}^{\delta}(M(x) \parallel M(y)) \leq \epsilon$ and $D_{\infty}^{\delta}(M(y) \parallel M(x)) \leq \epsilon$
+\end{enumerate}
+\paragraph{统计距离(statistical distance)} 两个随机变量之间的统计距离定义为：
+\begin{equation}
+	\Delta(Y,Z) \overset{\underset{\mathrm{def}}{}}{=} \max_S(Pr[Y \in S]-Pr[Z \in S])
+\end{equation}
+如果有$\Delta(Y,Z) \leq \delta $，我们称Y和Z是$\delta$-近邻(close)。
+\paragraph{引理 3.17}
+\begin{enumerate}
+	\item $D_{\infty}^{\delta}(Y \parallel Z) \leq \epsilon \Leftrightarrow \exists Y': \Delta(Y,Y')\leq \delta \wedge D_{\infty}(Y' \parallel Z)\leq \epsilon$
+	\item $D_{\infty}(Y \parallel Z)\leq \epsilon \wedge D_{\infty}(Z \parallel Y)\leq \epsilon \Leftrightarrow \exists Y',Z': \Delta(Y,Y')\leq \delta/(e^\epsilon+1) \wedge \Delta(Z,Z')\leq \delta/(e^\epsilon+1) \wedge D_{\infty}(Y' \parallel Z') \leq \epsilon$
+\end{enumerate}
+\paragraph{引理 3.18} $D_{\infty}(Y \parallel Z) \wedge D_{\infty}(Y \parallel Z) \Rightarrow D(Y \parallel Z)\leq \epsilon \cdot (e^\epsilon-1 )$
+\paragraph{高级组合的使用场景} 我们的定义要考虑以下两个场景：
+\begin{itemize}
+	\item 对同一个数据集重复使用同样的差分隐私算法；
+	\item 针对使用了同一个个体数据的不同数据集，重复利用同样的差分隐私算法。
+\end{itemize}
+我们考虑两个实验：
+\begin{itemize}
+	\item 两个实验使用同一组预定义的隐私机制F;
+	\item 实验由攻击者A进行，每个实验对数据集进行k次操作（k重）；
+	\item A每次使用机制$M_i$和参数$w_i$进行操作，针对两个实验输入两个邻接数据集$x_i^0$和$x_i^1$，并接收到结果$y_i \in_R M_i(w_i,x_{i,b})$(针对实验b)。
+	\item $V_b$表示实验b获得的结果$(y_1,...,y_k)$；
+	\item A在实验过程中是有记忆的(stateful)，他可以根据情况自由选择数据集、机制和参数；
+	\item A总是认为数据集$x_i^0$包含Bob的信息，而$x_i^1$没有；
+	\item 我们要求的隐私保障是：攻击者不能分辨数据集中是否包含Bob的信息。
+\end{itemize}
+\paragraph{k重自由组合下的$\epsilon$-差分隐私} 如果一组机制F有$D_{\infty}(V^0\parallel V^1)\leq\epsilon$，我们就称F满足k重自由组合下(under k-fold adaptive composition)的$\epsilon$-差分隐私。
+\paragraph{定理3.20 高级组合} 一组$(\epsilon, \delta)$-差分机制的k重自由组合满足$({\epsilon}', k\delta+{\delta}')$-差分隐私，其中： ${\epsilon}'=\sqrt{2k\ln(1/{\delta}'\epsilon)} + k\epsilon(e^\epsilon-1)$.
+\paragraph{Laplace vs. Gauss} 我们可以使用Gauss噪声代替Laplace噪声，此时，我们需要使用$l_2$敏感度：
+\subparagraph{$l_2$-敏感度} 函数$f: \mathbb{N}^{|\chi|} \rightarrow \mathbb{R}^k$的$l_2$-敏感度定义为：
+\begin{equation}
+	\Delta_2(f)=\max_{x,y \in \mathbb{N}^{|\chi|} \atop \left \| x-y \right \|_1=1} \left \| f(x)-f(y) \right \|_2
+\end{equation}
+\subparagraph{定理3.22} 对于$c^2 > 2\ln(1.25/\delta)$，满足参数$\sigma \geq c\Delta_2(f)/\epsilon$的Gauss机制满足$(\epsilon, \delta)$-差分隐私。
+
+
+
+
+
+\section{Not Just Privacy: Improving Performance of Private Deep Learning in Mobile Cloud\cite{arden}}
+\subsection{Introduction}
+\paragraph{} 为了实现移动端的深度学习，一般有两种做法：1. 减小DNN的规模；2. 将大型DNN划分到各个设备和云端进行。前者会导致性能下降和无法控制的能量消耗；后者通过将DNN的前几层设置在移动设备上，而后几层部署在云端来实现。为了平衡效用和隐私，通常客户端会把用户数据进行转换再上传到云端，然而，即便传输的不是原始数据也会产生隐私泄露。
+\paragraph{ARDEN} 将网络分割为移动端和云端两个部分，DNN的浅层被部署在移动端，用于将原始数据转换成低级特征。
+
+\subsection{The Proposed Framework}
+\subsubsection{Overview}
+\paragraph{} ARDEN 将DNN划分为移动端和云端，浅层部署在移动端，它的参数是固定的，其参数值可以通过迁移学习而来；云端的参数则通过训练进行调参。
+\paragraph{推理阶段} 敏感数据首先被移动端的浅层进行转换处理，为保证隐私，数据还同时被进行nullification和随机噪声处理，之后才被传输到云端进行深层推理。
+\paragraph{训练阶段} 使用与敏感数据相同类型的公开数据进行训练，同时，提出了一个噪声训练方法，将原始数据与生产数据同时用于训练。
+\subsubsection{Differentially private transformation}
+\paragraph{} 为了保护隐私，需要在本地将数据进行干扰。直观的方法是在结果中直接加入Lap噪声，但由于获取总体敏感度比较困难，因此这会导致加入过的噪声而使效用减低。另外，这种方法也无法提供高度定制化的隐私要求，例如隐去某个高度敏感的字段。因此，本文提出了包括nullification和layer-wise扰动两种机制。
+
+\section{Learning privacy preserving encodings through adversarial training\cite{pittaluga2019learning}}
+\subsection{Introduction}
+\paragraph{} 图像、视频等高纬度数据在分享过程中总是会不经意地泄露一些信息。本文试图找到一种方法，即可以保证信息的有效共享，又能防止隐私泄露。
+\paragraph{} 本文利用对抗训练去学习一种编码，以阻止分类器通过编码过的数据去成功地推导隐私信息。文章演示了在场景识别的应用中，在提升正样本识别率的同时如何降低负样本的识别率。在作为baseline的模糊操作都不能阻止场景识别的情况下，本文提出的编码器可以成功地降低负样本场景识别率。
+\subsection{Learning Privcate Encoding Functions}
+\paragraph{} 本文框架基于这样的前提：1. 用于训练编码器的训练集打上了隐私属性值的标签，一旦编码器训练完成，我们将试图对敏感值估计器的训练能力进行限制。2. 当编码器训练完成后，攻击者能够利用编码后的带标签的数据训练估计器，我们需要对这样的估计器的性能进行限制。
+\subsubsection{Privacy as Adversarial Objective}
+\paragraph{}对整个框架进行形式化定义：
+	\subparagraph{编码器} $E: \mathbb{R}^N \rightarrow \mathbb{R}^{N'}$，输入样本$x \in \mathbb{R}^N$，$E(x)_i$表示E(x)的第i个元素。
+	\subparagraph{隐私属性} $u(x) \in \mathbb{U}$。编码器的目标就是要保护隐私属性的值$u(x)$免于纰漏。
+	\subparagraph{参数化的估计器} $\hat u = \Phi(x';\theta_u)$
+	\subparagraph{估计器的损失函数} $L(\hat u, u): \mathbb{U} \times \mathbb{U} \rightarrow R$，L越小，则估计出的敏感值越准确。
+	\subparagraph{估计器的训练目标} $I(E;u) = \underset{\theta_u}{\min}\underset{p(x)}{\mathbb{E}}\,L(\Phi(E(x);\theta_u),u(x))$. 调整$\theta_u$，使得估计器的平均损失最小。  
+	\subparagraph{编码器的训练目标} $E = \arg\max_E I(E;u)$. 使得I最大的那个E。
+	\paragraph{避免模型坍塌} 从训练目标可以看出，这将引发模型坍塌问题，致使最终E(x)变为常数。为避免这个问题，本文对编码器的输出做了一个限制：要求$\mathbb{E}E(x)_i = 0, \mathbb{E}E(x_i^2) = 1$，即均值为0，方差为1.
+	\paragraph{保护特定的属性} 编码器$E = \arg\max_E I(E;u)-\alpha I_v(E)$可以在编码的同时保护特定的属性v。即要求I(E;u)尽可能大的同时，I(E;v)尽可能小。
+\subsubsection{Architecture and Optimization}
+
+\subsection{Experimental Results}
+\paragraph{基础}
+\subparagraph{数据集} Places-365。本文从数据集中取两个组，每个组10个类别，用于构造“平衡”样本数据集。数据集的正样本就是其中一个类别，而负样本则从同一个组中的其余9个类别中随机抽取。
+\subparagraph{实验任务} 进行一次二分类：一个图片是否属于某个指定的分类。训练后的模型应当可以抑制某个特定类别（降低特定类别的分类精度），同时也要评估编码器对另外的类别的分类精度的影响。
+
+\paragraph{编码器训练} 本文训练4个编码器，用于抑制4种类别的分类，分别是：arch, army base, airport terminal, airfield。另外还训练了第五个编码器，用于抑制“army base”，同时避免对“airport terminal”的识别造成影响，此时取$\alpha=1/4$。
+\paragraph{评估}
+\subparagraph{基线} 对图像进行模糊后得到的分类结果。
+\subparagraph{} 分别训练两个编码器：army base 和 airport terminal，同时训练一个抑制army base但提升airport terminal的编码器。
+\subparagraph{} 图3的第1列展示了图像经过了编码器后，输入分类器得到的训练精度和验证精度，表明编码器可以成功地降低分类精度（进行抑制）；第2、3列分别演示了不同编码器对army base和airport terminal分类器的影响，输入分类器的图像是经过了编码器得到的输出结果。可以看成，当编码器固定后，即便使用经过编码的图像对分类器进行训练，分类器依然不能得到很好的精度。
+
+\section{Gp-gan: Gender preserving gan for synthesizing faces from landmarks\cite{gpgan2018}}
+\subsection{Introduction}
+\paragraph{动机} 面部landmark有一系列优点，本文研究怎么将landmark用于高级别(high-level)的面部分析任务上。目前只需要68个面部landmark就可以完成性别预测，本文将通过landmark生成面部图像，以此来提升性别预测的性能。
+\paragraph{贡献} 1. 在保护性别隐私情况下，第一次使用landmark生成面部图像；2. 提出了基于GAN的框架；
+
+\subsection{Proposed Method}
+\paragraph{生成器} 使用U-Net和DenseNet
+\paragraph{判别器} 使用PatchGAN
+\paragraph{目标函数} $L=L_A+\lambda_PL_P+\lambda_CL_C+\lambda_1L_1$
+\subparagraph{对抗损失} 定义为一组生成图片的熵：
+\begin{equation}
+	L_A=-\frac{1}{N}\sum_{i=1}^N\log(D(\hat x_i))
+\end{equation}
+\subparagraph{Perceptual loss} 定义为：$L_P=\left \| V(\hat x)-V(x) \right \|_1$
+\subparagraph{Gender preserving loss} 描述生成的图像与真实图像之间的性别误差，定义为：
+\begin{equation}
+	L_C=-\frac{1}{N}\sum_i(C(x_i)\log(C(\hat x_i)) +(1-C(x_i))\log(C(\hat x_i)))
+\end{equation}
+C表示预定义好的性别分类网络，本文使用VGG-16.
+\subparagraph{L1 loss} 描述生成的图像与真实图像之间的重建误差，定义为：
+\begin{equation}
+	L_1= \left \| G(\hat x)-x \right \|_1
+\end{equation}
+\subsection{Experiments}
+\paragraph{} 实验发现，使用GPGAN由landmark生成的图像可以很好地保存性别属性，生成图像的性别正确率超过90\%.
+
+\section{Deepfool: a simple and accurate method to fool deep neural networks\cite{deepfool}}
+\subsection{Introduction}
+\paragraph{} Deepfool的目的是找出使分类器做出错误判断的最小扰动。
+\subsection{DeepFool for binary classifiers}
+\paragraph{} 二分类器通过一个超平面将所有样本点分开，为了实现扰动，需要使样本点偏移到超平面的另外一边。具体的定义为：
+\subparagraph{$\hat k$在点x处的鲁棒性} 调整向量r，使得f(x)的符号改变，且r距离原点最近：
+\begin{equation}
+	\Delta(x;\hat k) := \min_r \left \| r \right \|_2 \mbox{ subject to } \hat k(x+r)\neq \hat k(x).
+\end{equation}
+\subparagraph{分类器$\hat k$的鲁棒性} 扰动r到原点距离与x到原点的距离之比的均值：
+\begin{equation}
+	\rho_{adv}(\hat k) = \mathbb{E}_x\frac{\Delta(x;\hat k)}{\left \| x \right \|_2}
+\end{equation}
+\subparagraph{划分超平面} 定义为：$\mathfrak{F}: {x:f(x)=0}$.
+\subparagraph{点到超平面的距离\cite{2016机器学习}} 定义为：
+\begin{equation}
+	r = \frac{|w_Tx+b|}{\left \| w \right \|}
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
