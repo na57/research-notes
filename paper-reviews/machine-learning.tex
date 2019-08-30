@@ -71,7 +71,7 @@
 
 %%%%%%%%% TITLE
 
-\title{论文阅读笔记}
+\title{机器学习笔记}
 
 \author{纳文琪$^{1}$}
 
@@ -130,16 +130,82 @@ ROC曲线的对角线对应的是“随机猜想”模型，而点(0,1)则代表
 
 \paragraph{AUC} 进行学习器比较时，与P-R曲线类似，若一个学习器的ROC曲线被另一个学习器的曲线完全包住，则可断言后者的性能优于前者；若两个学习器的ROC曲线有交叉，则需要比较ROC曲线下的面积，即AUC来进行判断。
 
+\section{神经网络}
 
+\paragraph{隐层参数} $W_j \in \mathbb{R}^{d  \times n}$ 表示j-th层的参数，此层有n个神经元，接收d个来自的(j-1)-th层的输入。$W_j$的第k列，就是输入到第k个神经元的数据对应的参数。
+\paragraph{隐层输出} $y_j \in \mathbb{R}^n$ 表示j-th层的输出，n个神经元有n个输出，计算公式为：$y_j = W_j^Ty_{j-1}+b_j$
 
-\subsection{Deep Neural Networks for Bot Detection\cite{kudugunta2018bot}}
+\newpage
+\section{Deep Neural Networks for Bot Detection\cite{kudugunta2018bot}}
 
 \paragraph{Motivation} 现有的系统都是在account-level进行bots的发现，需要根据特定帐号的一系列历史活动记录来确认帐号是否是bot。这在进行检测的时候代价非常昂贵。论文希望通过仅仅一条tweet来判断是否是bot。
 
 \paragraph{} 论文将bot发现的方法分为用户级和tweet级，进行分类；tweet级根据
 \paragraph{数据集} 论文使用的数据集存在不平衡问题，作者分别使用SMOTE+ENN和SOMTE+TOMEK的方法平衡数据。数据分为用户级和tweet级两类，用户级数据（用户元数据）包括statuses count、followers count等，tweet级数据包括retweet count、number of hashtags等。
 
+\newpage
+\section{损失函数}
+\subsection{softmax}
+\paragraph{下溢(underflow)} 当接近零的数被四舍五入为零后发生下溢。
+\paragraph{上溢(overflow)} 当大数量级的数被近似为$\infty$或$-\infty$时，发生上溢。 
+\paragraph{softmax函数}可对下溢和上溢进行数值稳定，定义为：
+\begin{equation}
+	softmax(\mathbf{x})_i = \frac{exp(x_i)}{\sum^n_{j=1}exp(x_j)}
+\end{equation}
+这个式子同样会产生溢出，例如，当x是很小的负数时，分母会变成零；当x是很大的数时，一样会发送上溢。这个问题可以通过计算$softmax(\mathbf(z), z=x-\max_ix_i$ 同时解决。
 
+\newpage
+\section{A Discriminative Feature Learning Approach for Deep Face Recognition \cite{centerloss}}
+\subsection{Introduction}
+\paragraph{动机} 一般的物体识别，主要是闭集识别，利用softmax loss即可处理，但人脸识别不单需要特征可分离（separable），也需要可区分(discriminative)，构建一个高效的loss可提升可区别性，为此，本文提出center loss。
+
+\paragraph{Center loss} 为每一个class的特征维护一个center，每次进行SGD的时候同时更新center，并最小化class中样本特征到中心的距离。
+\subsection{The Proposed Approach}
+\paragraph{toy example} 本文使用一个toy example来演示算法的效果。它最后一个隐层的维度是2，以便于我们使用二维图像来显示特征分布。toy example使用softmax loss，最后输出的特征的分布表示为图\ref{softmax-loss-2-d} ：
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{../images/softmax-loss-2-d.png}
+	\caption{}
+	\label{softmax-loss-2-d}
+\end{figure}
+
+\paragraph{Center loss} 为增强可区分度，需在保持特征分类的同时，最小化内部class的方差。center loss定义为：
+\begin{equation}
+	\mathfrak{L}_C=\frac{1}{2}\sum^m_{i=1}\left \| \mathbf{x}_i-\mathbf{c}_{y_i} \right \|^2_2
+\end{equation}
+理论上，$c_{y_j}$应当随着特征的变化而更新，因此，在每次更新更新参数的时候都要对它进行更新。
+\paragraph{} 综上，总的损失函数可以表示为：
+\begin{equation}
+	\mathfrak{L} = \mathfrak{L}_S + \lambda \mathfrak{L}_C
+\end{equation}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{../images/center-loss.png}
+	\caption{}
+	\label{softmax-loss-2-d}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
 \end{document}

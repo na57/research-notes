@@ -417,16 +417,42 @@ C表示预定义好的性别分类网络，本文使用VGG-16.
 	r = \frac{|w_Tx+b|}{\left \| w \right \|}
 \end{equation}
 
+\section{Protecting visual secrets using adversarial nets\cite{raval2017protecting}}
+\subsection{Introduction}
+\paragraph{} 当我们一直在追求神经网络效率的同时，也要注意对所捕获的图像中隐私内容的保护。本文采用一种对抗扰动机制来隐藏图像中的隐私内容。
+
+\subsection{Adversarial Perturbation Mechanism}
+\paragraph{} 框架有两个网络组成：攻击者网络A和混淆器网络O。框架描述：
+	\subparagraph{} X: 所有图像的集合， $X_S \subseteq X$: 带有敏感数据的图片集合，$X_U = X \\ X_S$：公开图片。
+	\subparagraph{混淆器O} $O(x, \theta_O) \in X$表示混淆结果，其符合公开图片的分布。
+	\subparagraph{攻击者网络A} $A(x, \theta_A)$表示攻击者对于图片x含有隐私信息的概率。
+	\subparagraph{攻击者网络A的优化条件} 找到$\theta_A$，使得当x含有敏感数据时A最大，A是公开图片是A最小。
+		\begin{equation}
+			\begin{split}
+				\arg\max_{\theta_A}\mathbb{E}_{x\in X_S}A(x,\theta_A) &+ \mathbb{E}_{x\in X_U}(1-A(x,\theta_A)) \\
+					& +\mathbb{E}_{x\in X_S}A(O(x, \theta_O),\theta_A) \\
+					& +\mathbb{E}_{x\in X_U}(1-A(O(x, \theta_O),\theta_A))
+			\end{split}
+		\end{equation}
+	\subparagraph{混淆器O的优化条件} 找到$\theta_O$，使得任意图片对攻击者网络A的输出及效用损失（utility loss, $L_U$）最小。
+		\begin{equation}
+			\begin{split}
+				\arg\min_{\theta_O}\lambda & \mathbb{E}_{x \in X} A(O(x, \theta_O),\theta_A) \\
+					& +(1-\lambda)\mathbb{E}_{x\in X}L_U(x, O(x,\theta_O))
+			\end{split}
+		\end{equation}
+	$\lambda$可用于权衡隐私和效用，本文中效用损失定义为$L_1$范数：$L_U(x,y)=\left \| x -y \right \|_1$.
+
+\subsection{实验}
+\paragraph{数据集} CIFAR10，选择其中两个分类：horse和airplane。一共有10000个训练样本和2000个测试样本，组成了公开图片$X_U$，利用这些图片，本文在每张图片上生成一个随机的二维码当做是敏感信息，从而生成$X_S$。
 
 
-
-
-
-
-
-
-
-
+\section{Towards Deep Learning Models Resistant to Adversarial Attacks}
+\subsection{Introduction}
+\paragraph{动机} 已有不少研究可对抗基于深度学习的分类器，抵御对抗选择输入攻击已经成为深度学习网络设计的一个重要目标。本文研究如何提供一个系统针对对抗输入的健壮性。
+\paragraph{存在的问题} 目前提高健壮性的方法包括detection distillation, feature squeezing和对抗样本检测等。然而，这些方法并不能对他们所提供的保障给出一个好的理解，无法保证攻击无法找到对抗性样本。
+\paragraph{研究内容} 本文在健壮性优化的角度下，研究神经网络的对抗健壮性。
+\subsection{对抗健壮性的优化视图}
 
 
 
