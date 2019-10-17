@@ -146,7 +146,7 @@
 
 
 
-
+\newpage
 \section{Privacy-preserving deep learning\cite{shokri2015ppdl}}
 \subsection{Introduction}
 \paragraph{} 本文提出一种协调深度学习系统，用于权衡效用和隐私。系统运行多方使用自己的输入数据合作训练一个神经网络模型，而不需要共享。此技术的关键创新是，在训练期间选择性共享模型参数。参数共享运行多个参与者在没有显式的输入数据的共享的情况下，互相利用其它人的模型计算结果。
@@ -343,6 +343,7 @@ $\left \| f(x)-y \right \|_\infty$ 表示任意大小的数据集，因加入干
 \subsubsection{Differentially private transformation}
 \paragraph{} 为了保护隐私，需要在本地将数据进行干扰。直观的方法是在结果中直接加入Lap噪声，但由于获取总体敏感度比较困难，因此这会导致加入过的噪声而使效用减低。另外，这种方法也无法提供高度定制化的隐私要求，例如隐去某个高度敏感的字段。因此，本文提出了包括nullification和layer-wise扰动两种机制。
 
+\newpage
 \section{Learning privacy preserving encodings through adversarial training\cite{pittaluga2019learning}}
 \subsection{Introduction}
 \paragraph{} 图像、视频等高纬度数据在分享过程中总是会不经意地泄露一些信息。本文试图找到一种方法，即可以保证信息的有效共享，又能防止隐私泄露。
@@ -455,22 +456,61 @@ C表示预定义好的性别分类网络，本文使用VGG-16.
 \subsection{对抗健壮性的优化视图}
 
 
+\newpage
+\section{Censoring Representations with an Adversary\cite{censoring}}
+\paragraph{} 本文要解决的问题是：我们希望提供数据给第三方，但确保第三方无法计算得到关键的敏感数据。相关的应用主要有两类：公平分类和图像匿名化。
+	\subparagraph{公平分类} 一个分类决策是无歧视的，不依赖于敏感字段。
+	\subparagraph{图像匿名化} 在传输图像给第三方前，移除图片中的一些敏感信息。本文所使用的方法在训练模型时无需使用对齐的样本，仅需要两组分类好的样本即可。
+\paragraph{公平和歧视的形式化定义} 考虑一个分类任务，输入空间是$X \subset \mathbb{R}^n$，输出为标签集$Y = \{0,1\}$和隐私$S=\{0,1\}$。分类器定义为：$\eta : X \rightarrow Y$。
+	\subparagraph{公平} 定义为：$P(\eta(X)=1|S=1))=P(\eta(X)=1|S=0)$，也就是说，无论敏感数据是什么样的，分类为同一个标签的概率都是一样的。
+	\subparagraph{歧视}定义为：
+\paragraph{审查表示} 的目的是学习一种表示$R=Enc(X)$，使得它能够保留X用于预测Y的那部分信息，但对于敏感数据S是独立的。损失函数可以表示为：$L=\alpha C(X,R) + \beta D(S,R) + \gamma E(Y,R)$，他包括三个部分：
+	\subparagraph{C} 是从R重构X的成本；
+	\subparagraph{D} 是R和S之间依赖性的度量。
+	\subparagraph{E} 是由R预测Y的误差。
+
+\newpage
+\section{The Secret Sharer: Measuring Unintended Neural Network Memorization \& Extracting Secrets\cite{secretsharer}}
+\paragraph{} 机器学习模型可能会在无意中泄露秘密（例如“自动完成文本”功能），因此，即便这种情况很少见，一个好的模型也应当假设它的存在。在机器学习过程中，无意的记忆很难避免，只有在训练过程中使用差分隐私技术才能消除隐私纰漏问题。
+\paragraph{} 本文假设存在一个威胁模型：一些用户通过输入大量不同的数据试探模型。
+
+\newpage
+\section{Poster: Image Disguising for Privacy-preserving Deep Learning\cite{imagedisguising}}
+
+\paragraph{动机} 深度学习经常使用外部资源（GPU等），这可能会导致隐私泄露。由于深度学习本身很强大，因此即便是经过伪装的图片它也能够分辨。因此，本文要讨论的问题就是怎么设计比较合理的机制，使得原始图片可以很好地被伪装（在视觉上和算法上均不能重构），同时又能保留深度学习需要的特征。
+\paragraph{图像伪装} 假设有一个图片集${(X_i,y_i}$，伪装机制$T_K$将其转换成${(T_K(X_i),y_i}$,$D_T$是一个以$T_K(X_i)$作为输入的深度网络，其输出为$\hat y = D_T(T_K(X))$。
+	\subparagraph{Block-wise Permutation} 将图像分割成小块，并打乱后重拼。然而，这样的机制对于隐藏图片内容毫无意义，因为根据小块的边缘文理之间的关系可以很容易地恢复原始图像。
+	\subparagraph{Randomized Multidimensional Transformations} 对图像X做一个转换：$XR+\Delta$，其中$\Delta$是一个随机噪声。
 
 
+\newpage
+\section{Vgan-based image representation learning for privacy-preserving facial expression recognition\cite{pprl-vgan}}
+\paragraph{}自动面部表情识别是人机交互的重要组件,目前大量表情识别系统依赖于高清图片，忽略了用户的视觉隐私。目前很多方法，为了保护隐私对图像进行像素化或模糊，这降低了效用。
+\paragraph{} 本文利用VGAN将图片转换成可用于表情识别的表示，以及表情相同但指定id的图像。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{../images/pprl-vgan.png}
+	\caption{}
+	\label{laplace-distribution}
+\end{figure}
 
+\paragraph{} PPRL-VGAN的网络如下图：
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{../images/pprl-vgan-network.png}
+	\caption{}
+	\label{laplace-distribution}
+\end{figure}
+\paragraph{} 给定一个图像I，用户标签为$y^{id}$，表情标签为$y^e$。模型的主要目的是
+\begin{enumerate}
+	\item 学习一个身份不变的面部图像表示f(I)，用于面部表情识别；
+	\item 合成一个具有相同表情，并具有指定面容的图像$\hat I$。
+\end{enumerate}
 
-
-
-
-
-
-
-
-
-
-
-
-
+\paragraph{判别器} 模型有三个判别器
+	\subparagraph{} $D^1$ 用于判断图像是真实图像还是合成图像；
+	\subparagraph{} $D^2$ 用于判断用户身份是否在输入集合中；
+	\subparagraph{} $D^3$ 用于对表情进行分类。
 
 
 
