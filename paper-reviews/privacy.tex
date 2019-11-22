@@ -512,10 +512,34 @@ C表示预定义好的性别分类网络，本文使用VGG-16.
 	\subparagraph{} $D^2$ 用于判断用户身份是否在输入集合中；
 	\subparagraph{} $D^3$ 用于对表情进行分类。
 
+\newpage
+\section{Learning to Anonymize Faces for Privacy Preserving Action Detection\cite{anonymize-faces}}
+\paragraph{} 本文开发一个视频人脸匿名器。在智能家庭应用中，智能摄像头可能需要通过读取用户动作来进行判断，但此类判断并不需要用户隐私信息（比如脸部信息）。本文开发的匿名器就是将视频中的人脸信息进行一个匿名化。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{../images/face-anonymity.png}
+	\caption{}
+	\label{laplace-distribution}
+\end{figure}
+\paragraph{} 本文的目标是在匿名化视频中的人物的同时还能够识别动作。总体框架如图：
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{../images/face-anonymity-framework.png}
+	\caption{}
+	\label{laplace-distribution}
+\end{figure}
+\paragraph{} 需要学习3个主要组件：
+	\subparagraph{编码器M} 用于将输入的图像匿名化；
+	\subparagraph{动作识别器A} 用于识别视频中人的动作；
+	 \subparagraph{面部分类器D} 用于对图像中的人进行面部识别。
+
+
+\newpage
+\section{Efficient Decision-based Black-box Adversarial Attacks on Face Recognition\cite{blace-box-attack-fr}}
 
 
 
-
+\newpage
 \bibliographystyle{ieeepes}
 \bibliography{../Saliency}
 \end{document}
